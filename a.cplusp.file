@@ -1,7 +1,66 @@
-hello world!
-This is kishan here.
-My rollnumber is 201501053
-1 + 2 = 3 and not 4
-12.3
-.3
-.34
+int a;
+int b = 5;
+float b = 5;
+char b = 's';
+bool b = true;
+bool b = true;
+bool b = true;
+
+
+if (abc == 5)
+{
+    cas = abc+asb;
+}
+
+
+if (abc == 5)
+{
+    cas = abc+asb;
+}
+else
+{
+    aa = aab + asdad;
+}
+
+
+if (abc == 5)
+{
+    cas = abc+asb;
+}
+elif(abc >= 5)
+{
+    sadasd = sad - sad ; 
+}
+else
+{
+    aa = aab + asdad;
+}
+
+
+(a == b)? a=b+5; : a=c+10; 
+
+
+for a = 2,8
+{
+    c = c + 1;
+    asdsad = 5 + 5;
+    asdsda = asdasd + 45;
+    (a == b)? a=b+5; : a=c+10; 
+}
+
+
+for ab = 1,1,10
+{
+    c = c + 1;
+    for ab = 1,1,10
+    {
+        c = c + 1;
+    }
+}
+
+
+while (a<=10)
+{
+    as = asda + sadsa;
+    das = das + 1;
+}

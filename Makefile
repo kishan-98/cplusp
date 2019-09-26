@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := cplusp
+
 cplusp.tab.c cplusp.tab.h: cplusp.y
 	bison -d cplusp.y
 
