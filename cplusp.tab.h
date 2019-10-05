@@ -54,13 +54,15 @@
      ELSE = 270,
      FOR = 271,
      WHILE = 272,
-     INT = 273,
-     FLOAT = 274,
-     CHAR = 275,
-     BOOL = 276,
-     STRING = 277,
-     VARIABLE = 278,
-     INVALID = 279
+     RETURN = 273,
+     BREAK = 274,
+     INT = 275,
+     FLOAT = 276,
+     CHAR = 277,
+     BOOL = 278,
+     STRING = 279,
+     VARIABLE = 280,
+     INVALID = 281
    };
 #endif
 /* Tokens.  */
@@ -79,13 +81,15 @@
 #define ELSE 270
 #define FOR 271
 #define WHILE 272
-#define INT 273
-#define FLOAT 274
-#define CHAR 275
-#define BOOL 276
-#define STRING 277
-#define VARIABLE 278
-#define INVALID 279
+#define RETURN 273
+#define BREAK 274
+#define INT 275
+#define FLOAT 276
+#define CHAR 277
+#define BOOL 278
+#define STRING 279
+#define VARIABLE 280
+#define INVALID 281
 
 
 
@@ -103,7 +107,7 @@ typedef union YYSTYPE
   bool bval;
 }
 /* Line 1529 of yacc.c.  */
-#line 107 "cplusp.tab.h"
+#line 111 "cplusp.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

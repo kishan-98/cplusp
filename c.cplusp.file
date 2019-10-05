@@ -1,0 +1,26 @@
+return;
+break;
+
+for a = 2 , 8,   1{
+	break;
+}
+
+int main(){
+return 0;
+}
+
+int sum(int a, int b){
+	return a+b;
+}
+
+int a = 5;
+int b = 2;
+
+sum(a, b);
+sum(5,2);
+sum(5,b);
+
+char k = 'k';
+print(k);
+print(5);
+print("my name is", k);

@@ -1,0 +1,1720 @@
+Terminals which are not used
+
+   INVALID
+
+
+State 14 conflicts: 1 shift/reduce
+State 62 conflicts: 5 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: statement_list
+
+    2 statement_list: statement statement_list
+    3               | statement
+
+    4 statement: declaration_statement
+    5          | assignment_statement
+    6          | expression_statement
+    7          | control_statement
+    8          | function_declaration
+    9          | function_call
+   10          | loops
+   11          | break_statement
+   12          | return_statement
+
+   13 DATA_TYPE: TYPE_INT
+   14          | TYPE_FLOAT
+   15          | TYPE_CHAR
+   16          | TYPE_BOOL
+
+   17 VALUE: INT
+   18      | FLOAT
+   19      | CHAR
+   20      | BOOL
+
+   21 declaration_statement: DATA_TYPE VARIABLE TERMINATOR
+   22                      | DATA_TYPE VARIABLE ASSIGNMENT VALUE TERMINATOR
+
+   23 control_statement: IF '(' expression ')' '{' statement_list '}'
+   24                  | IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   25                  | IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   26                  | '(' expression ')' '?' statement ':' statement
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE '{' statement_list '}'
+   28      | FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list '}'
+   29      | WHILE '(' expression ')' '{' statement_list '}'
+
+   30 break_statement: BREAK TERMINATOR
+
+   31 return_statement: RETURN expression TERMINATOR
+   32                 | RETURN TERMINATOR
+
+   33 operator: UNARY
+   34         | BINARY
+   35         | ARITHMATIC
+   36         | LOGICAL
+   37         | ASSIGNMENT
+
+   38 expression: expression operator expression
+   39           | VARIABLE
+   40           | VALUE
+
+   41 expression_statement: expression TERMINATOR
+
+   42 assignment_statement: VARIABLE ASSIGNMENT expression TERMINATOR
+
+   43 parameter_list: DATA_TYPE VARIABLE ',' parameter_list
+   44               | DATA_TYPE VARIABLE
+
+   45 argument_list: VARIABLE ',' argument_list
+   46              | VARIABLE
+   47              | STRING ',' argument_list
+   48              | STRING
+   49              | VALUE ',' argument_list
+   50              | VALUE
+
+   51 function_name: VARIABLE
+
+   52 function_declaration: DATA_TYPE function_name '(' parameter_list ')' '{' statement_list '}'
+   53                     | DATA_TYPE function_name '(' ')' '{' statement_list '}'
+
+   54 function_call: function_name '(' argument_list ')' TERMINATOR
+   55              | function_name '(' ')' TERMINATOR
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 23 24 25 26 29 52 53 54 55
+')' (41) 23 24 25 26 29 52 53 54 55
+',' (44) 27 28 43 45 47 49
+':' (58) 26
+'?' (63) 26
+'{' (123) 23 24 25 27 28 29 52 53
+'}' (125) 23 24 25 27 28 29 52 53
+error (256)
+TYPE_INT (258) 13
+TYPE_FLOAT (259) 14
+TYPE_CHAR (260) 15
+TYPE_BOOL (261) 16
+UNARY (262) 33
+BINARY (263) 34
+ARITHMATIC (264) 35
+LOGICAL (265) 36
+ASSIGNMENT (266) 22 27 28 37 42
+TERMINATOR (267) 21 22 30 31 32 41 42 54 55
+IF (268) 23 24 25
+ELIF (269) 25
+ELSE (270) 24 25
+FOR (271) 27 28
+WHILE (272) 29
+RETURN (273) 31 32
+BREAK (274) 30
+INT (275) 17
+FLOAT (276) 18
+CHAR (277) 19
+BOOL (278) 20
+STRING (279) 47 48
+VARIABLE (280) 21 22 27 28 39 42 43 44 45 46 51
+INVALID (281)
+
+
+Nonterminals, with rules where they appear
+
+$accept (34)
+    on left: 0
+program (35)
+    on left: 1, on right: 0
+statement_list (36)
+    on left: 2 3, on right: 1 2 23 24 25 27 28 29 52 53
+statement (37)
+    on left: 4 5 6 7 8 9 10 11 12, on right: 2 3 26
+DATA_TYPE (38)
+    on left: 13 14 15 16, on right: 21 22 43 44 52 53
+VALUE (39)
+    on left: 17 18 19 20, on right: 22 27 28 40 49 50
+declaration_statement (40)
+    on left: 21 22, on right: 4
+control_statement (41)
+    on left: 23 24 25 26, on right: 7
+loops (42)
+    on left: 27 28 29, on right: 10
+break_statement (43)
+    on left: 30, on right: 11
+return_statement (44)
+    on left: 31 32, on right: 12
+operator (45)
+    on left: 33 34 35 36 37, on right: 38
+expression (46)
+    on left: 38 39 40, on right: 23 24 25 26 29 31 38 41 42
+expression_statement (47)
+    on left: 41, on right: 6
+assignment_statement (48)
+    on left: 42, on right: 5
+parameter_list (49)
+    on left: 43 44, on right: 43 52
+argument_list (50)
+    on left: 45 46 47 48 49 50, on right: 45 47 49 54
+function_name (51)
+    on left: 51, on right: 52 53 54 55
+function_declaration (52)
+    on left: 52 53, on right: 8
+function_call (53)
+    on left: 54 55, on right: 9
+
+
+state 0
+
+    0 $accept: . program $end
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    program                go to state 16
+    statement_list         go to state 17
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 1
+
+   13 DATA_TYPE: TYPE_INT .
+
+    $default  reduce using rule 13 (DATA_TYPE)
+
+
+state 2
+
+   14 DATA_TYPE: TYPE_FLOAT .
+
+    $default  reduce using rule 14 (DATA_TYPE)
+
+
+state 3
+
+   15 DATA_TYPE: TYPE_CHAR .
+
+    $default  reduce using rule 15 (DATA_TYPE)
+
+
+state 4
+
+   16 DATA_TYPE: TYPE_BOOL .
+
+    $default  reduce using rule 16 (DATA_TYPE)
+
+
+state 5
+
+   23 control_statement: IF . '(' expression ')' '{' statement_list '}'
+   24                  | IF . '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   25                  | IF . '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '('  shift, and go to state 32
+
+
+state 6
+
+   27 loops: FOR . VARIABLE ASSIGNMENT VALUE ',' VALUE '{' statement_list '}'
+   28      | FOR . VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list '}'
+
+    VARIABLE  shift, and go to state 33
+
+
+state 7
+
+   29 loops: WHILE . '(' expression ')' '{' statement_list '}'
+
+    '('  shift, and go to state 34
+
+
+state 8
+
+   31 return_statement: RETURN . expression TERMINATOR
+   32                 | RETURN . TERMINATOR
+
+    TERMINATOR  shift, and go to state 35
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 37
+
+
+state 9
+
+   30 break_statement: BREAK . TERMINATOR
+
+    TERMINATOR  shift, and go to state 38
+
+
+state 10
+
+   17 VALUE: INT .
+
+    $default  reduce using rule 17 (VALUE)
+
+
+state 11
+
+   18 VALUE: FLOAT .
+
+    $default  reduce using rule 18 (VALUE)
+
+
+state 12
+
+   19 VALUE: CHAR .
+
+    $default  reduce using rule 19 (VALUE)
+
+
+state 13
+
+   20 VALUE: BOOL .
+
+    $default  reduce using rule 20 (VALUE)
+
+
+state 14
+
+   39 expression: VARIABLE .
+   42 assignment_statement: VARIABLE . ASSIGNMENT expression TERMINATOR
+   51 function_name: VARIABLE .
+
+    ASSIGNMENT  shift, and go to state 39
+
+    ASSIGNMENT  [reduce using rule 39 (expression)]
+    '('         reduce using rule 51 (function_name)
+    $default    reduce using rule 39 (expression)
+
+
+state 15
+
+   26 control_statement: '(' . expression ')' '?' statement ':' statement
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    VARIABLE  shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 40
+
+
+state 16
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 41
+
+
+state 17
+
+    1 program: statement_list .
+
+    $default  reduce using rule 1 (program)
+
+
+state 18
+
+    2 statement_list: statement . statement_list
+    3               | statement .
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    $default  reduce using rule 3 (statement_list)
+
+    statement_list         go to state 42
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 19
+
+   21 declaration_statement: DATA_TYPE . VARIABLE TERMINATOR
+   22                      | DATA_TYPE . VARIABLE ASSIGNMENT VALUE TERMINATOR
+   52 function_declaration: DATA_TYPE . function_name '(' parameter_list ')' '{' statement_list '}'
+   53                     | DATA_TYPE . function_name '(' ')' '{' statement_list '}'
+
+    VARIABLE  shift, and go to state 43
+
+    function_name  go to state 44
+
+
+state 20
+
+   40 expression: VALUE .
+
+    $default  reduce using rule 40 (expression)
+
+
+state 21
+
+    4 statement: declaration_statement .
+
+    $default  reduce using rule 4 (statement)
+
+
+state 22
+
+    7 statement: control_statement .
+
+    $default  reduce using rule 7 (statement)
+
+
+state 23
+
+   10 statement: loops .
+
+    $default  reduce using rule 10 (statement)
+
+
+state 24
+
+   11 statement: break_statement .
+
+    $default  reduce using rule 11 (statement)
+
+
+state 25
+
+   12 statement: return_statement .
+
+    $default  reduce using rule 12 (statement)
+
+
+state 26
+
+   38 expression: expression . operator expression
+   41 expression_statement: expression . TERMINATOR
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    TERMINATOR  shift, and go to state 50
+
+    operator  go to state 51
+
+
+state 27
+
+    6 statement: expression_statement .
+
+    $default  reduce using rule 6 (statement)
+
+
+state 28
+
+    5 statement: assignment_statement .
+
+    $default  reduce using rule 5 (statement)
+
+
+state 29
+
+   54 function_call: function_name . '(' argument_list ')' TERMINATOR
+   55              | function_name . '(' ')' TERMINATOR
+
+    '('  shift, and go to state 52
+
+
+state 30
+
+    8 statement: function_declaration .
+
+    $default  reduce using rule 8 (statement)
+
+
+state 31
+
+    9 statement: function_call .
+
+    $default  reduce using rule 9 (statement)
+
+
+state 32
+
+   23 control_statement: IF '(' . expression ')' '{' statement_list '}'
+   24                  | IF '(' . expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   25                  | IF '(' . expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    VARIABLE  shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 53
+
+
+state 33
+
+   27 loops: FOR VARIABLE . ASSIGNMENT VALUE ',' VALUE '{' statement_list '}'
+   28      | FOR VARIABLE . ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list '}'
+
+    ASSIGNMENT  shift, and go to state 54
+
+
+state 34
+
+   29 loops: WHILE '(' . expression ')' '{' statement_list '}'
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    VARIABLE  shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 55
+
+
+state 35
+
+   32 return_statement: RETURN TERMINATOR .
+
+    $default  reduce using rule 32 (return_statement)
+
+
+state 36
+
+   39 expression: VARIABLE .
+
+    $default  reduce using rule 39 (expression)
+
+
+state 37
+
+   31 return_statement: RETURN expression . TERMINATOR
+   38 expression: expression . operator expression
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    TERMINATOR  shift, and go to state 56
+
+    operator  go to state 51
+
+
+state 38
+
+   30 break_statement: BREAK TERMINATOR .
+
+    $default  reduce using rule 30 (break_statement)
+
+
+state 39
+
+   42 assignment_statement: VARIABLE ASSIGNMENT . expression TERMINATOR
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    VARIABLE  shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 57
+
+
+state 40
+
+   26 control_statement: '(' expression . ')' '?' statement ':' statement
+   38 expression: expression . operator expression
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    ')'         shift, and go to state 58
+
+    operator  go to state 51
+
+
+state 41
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 42
+
+    2 statement_list: statement statement_list .
+
+    $default  reduce using rule 2 (statement_list)
+
+
+state 43
+
+   21 declaration_statement: DATA_TYPE VARIABLE . TERMINATOR
+   22                      | DATA_TYPE VARIABLE . ASSIGNMENT VALUE TERMINATOR
+   51 function_name: VARIABLE .
+
+    ASSIGNMENT  shift, and go to state 59
+    TERMINATOR  shift, and go to state 60
+
+    $default  reduce using rule 51 (function_name)
+
+
+state 44
+
+   52 function_declaration: DATA_TYPE function_name . '(' parameter_list ')' '{' statement_list '}'
+   53                     | DATA_TYPE function_name . '(' ')' '{' statement_list '}'
+
+    '('  shift, and go to state 61
+
+
+state 45
+
+   33 operator: UNARY .
+
+    $default  reduce using rule 33 (operator)
+
+
+state 46
+
+   34 operator: BINARY .
+
+    $default  reduce using rule 34 (operator)
+
+
+state 47
+
+   35 operator: ARITHMATIC .
+
+    $default  reduce using rule 35 (operator)
+
+
+state 48
+
+   36 operator: LOGICAL .
+
+    $default  reduce using rule 36 (operator)
+
+
+state 49
+
+   37 operator: ASSIGNMENT .
+
+    $default  reduce using rule 37 (operator)
+
+
+state 50
+
+   41 expression_statement: expression TERMINATOR .
+
+    $default  reduce using rule 41 (expression_statement)
+
+
+state 51
+
+   38 expression: expression operator . expression
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    VARIABLE  shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 62
+
+
+state 52
+
+   54 function_call: function_name '(' . argument_list ')' TERMINATOR
+   55              | function_name '(' . ')' TERMINATOR
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    STRING    shift, and go to state 63
+    VARIABLE  shift, and go to state 64
+    ')'       shift, and go to state 65
+
+    VALUE          go to state 66
+    argument_list  go to state 67
+
+
+state 53
+
+   23 control_statement: IF '(' expression . ')' '{' statement_list '}'
+   24                  | IF '(' expression . ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   25                  | IF '(' expression . ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   38 expression: expression . operator expression
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    ')'         shift, and go to state 68
+
+    operator  go to state 51
+
+
+state 54
+
+   27 loops: FOR VARIABLE ASSIGNMENT . VALUE ',' VALUE '{' statement_list '}'
+   28      | FOR VARIABLE ASSIGNMENT . VALUE ',' VALUE ',' VALUE '{' statement_list '}'
+
+    INT    shift, and go to state 10
+    FLOAT  shift, and go to state 11
+    CHAR   shift, and go to state 12
+    BOOL   shift, and go to state 13
+
+    VALUE  go to state 69
+
+
+state 55
+
+   29 loops: WHILE '(' expression . ')' '{' statement_list '}'
+   38 expression: expression . operator expression
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    ')'         shift, and go to state 70
+
+    operator  go to state 51
+
+
+state 56
+
+   31 return_statement: RETURN expression TERMINATOR .
+
+    $default  reduce using rule 31 (return_statement)
+
+
+state 57
+
+   38 expression: expression . operator expression
+   42 assignment_statement: VARIABLE ASSIGNMENT expression . TERMINATOR
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    TERMINATOR  shift, and go to state 71
+
+    operator  go to state 51
+
+
+state 58
+
+   26 control_statement: '(' expression ')' . '?' statement ':' statement
+
+    '?'  shift, and go to state 72
+
+
+state 59
+
+   22 declaration_statement: DATA_TYPE VARIABLE ASSIGNMENT . VALUE TERMINATOR
+
+    INT    shift, and go to state 10
+    FLOAT  shift, and go to state 11
+    CHAR   shift, and go to state 12
+    BOOL   shift, and go to state 13
+
+    VALUE  go to state 73
+
+
+state 60
+
+   21 declaration_statement: DATA_TYPE VARIABLE TERMINATOR .
+
+    $default  reduce using rule 21 (declaration_statement)
+
+
+state 61
+
+   52 function_declaration: DATA_TYPE function_name '(' . parameter_list ')' '{' statement_list '}'
+   53                     | DATA_TYPE function_name '(' . ')' '{' statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    ')'         shift, and go to state 74
+
+    DATA_TYPE       go to state 75
+    parameter_list  go to state 76
+
+
+state 62
+
+   38 expression: expression . operator expression
+   38           | expression operator expression .
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+
+    UNARY       [reduce using rule 38 (expression)]
+    BINARY      [reduce using rule 38 (expression)]
+    ARITHMATIC  [reduce using rule 38 (expression)]
+    LOGICAL     [reduce using rule 38 (expression)]
+    ASSIGNMENT  [reduce using rule 38 (expression)]
+    $default    reduce using rule 38 (expression)
+
+    operator  go to state 51
+
+
+state 63
+
+   47 argument_list: STRING . ',' argument_list
+   48              | STRING .
+
+    ','  shift, and go to state 77
+
+    $default  reduce using rule 48 (argument_list)
+
+
+state 64
+
+   45 argument_list: VARIABLE . ',' argument_list
+   46              | VARIABLE .
+
+    ','  shift, and go to state 78
+
+    $default  reduce using rule 46 (argument_list)
+
+
+state 65
+
+   55 function_call: function_name '(' ')' . TERMINATOR
+
+    TERMINATOR  shift, and go to state 79
+
+
+state 66
+
+   49 argument_list: VALUE . ',' argument_list
+   50              | VALUE .
+
+    ','  shift, and go to state 80
+
+    $default  reduce using rule 50 (argument_list)
+
+
+state 67
+
+   54 function_call: function_name '(' argument_list . ')' TERMINATOR
+
+    ')'  shift, and go to state 81
+
+
+state 68
+
+   23 control_statement: IF '(' expression ')' . '{' statement_list '}'
+   24                  | IF '(' expression ')' . '{' statement_list '}' ELSE '{' statement_list '}'
+   25                  | IF '(' expression ')' . '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '{'  shift, and go to state 82
+
+
+state 69
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE . ',' VALUE '{' statement_list '}'
+   28      | FOR VARIABLE ASSIGNMENT VALUE . ',' VALUE ',' VALUE '{' statement_list '}'
+
+    ','  shift, and go to state 83
+
+
+state 70
+
+   29 loops: WHILE '(' expression ')' . '{' statement_list '}'
+
+    '{'  shift, and go to state 84
+
+
+state 71
+
+   42 assignment_statement: VARIABLE ASSIGNMENT expression TERMINATOR .
+
+    $default  reduce using rule 42 (assignment_statement)
+
+
+state 72
+
+   26 control_statement: '(' expression ')' '?' . statement ':' statement
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement              go to state 85
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 73
+
+   22 declaration_statement: DATA_TYPE VARIABLE ASSIGNMENT VALUE . TERMINATOR
+
+    TERMINATOR  shift, and go to state 86
+
+
+state 74
+
+   53 function_declaration: DATA_TYPE function_name '(' ')' . '{' statement_list '}'
+
+    '{'  shift, and go to state 87
+
+
+state 75
+
+   43 parameter_list: DATA_TYPE . VARIABLE ',' parameter_list
+   44               | DATA_TYPE . VARIABLE
+
+    VARIABLE  shift, and go to state 88
+
+
+state 76
+
+   52 function_declaration: DATA_TYPE function_name '(' parameter_list . ')' '{' statement_list '}'
+
+    ')'  shift, and go to state 89
+
+
+state 77
+
+   47 argument_list: STRING ',' . argument_list
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    STRING    shift, and go to state 63
+    VARIABLE  shift, and go to state 64
+
+    VALUE          go to state 66
+    argument_list  go to state 90
+
+
+state 78
+
+   45 argument_list: VARIABLE ',' . argument_list
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    STRING    shift, and go to state 63
+    VARIABLE  shift, and go to state 64
+
+    VALUE          go to state 66
+    argument_list  go to state 91
+
+
+state 79
+
+   55 function_call: function_name '(' ')' TERMINATOR .
+
+    $default  reduce using rule 55 (function_call)
+
+
+state 80
+
+   49 argument_list: VALUE ',' . argument_list
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    STRING    shift, and go to state 63
+    VARIABLE  shift, and go to state 64
+
+    VALUE          go to state 66
+    argument_list  go to state 92
+
+
+state 81
+
+   54 function_call: function_name '(' argument_list ')' . TERMINATOR
+
+    TERMINATOR  shift, and go to state 93
+
+
+state 82
+
+   23 control_statement: IF '(' expression ')' '{' . statement_list '}'
+   24                  | IF '(' expression ')' '{' . statement_list '}' ELSE '{' statement_list '}'
+   25                  | IF '(' expression ')' '{' . statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 94
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 83
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE ',' . VALUE '{' statement_list '}'
+   28      | FOR VARIABLE ASSIGNMENT VALUE ',' . VALUE ',' VALUE '{' statement_list '}'
+
+    INT    shift, and go to state 10
+    FLOAT  shift, and go to state 11
+    CHAR   shift, and go to state 12
+    BOOL   shift, and go to state 13
+
+    VALUE  go to state 95
+
+
+state 84
+
+   29 loops: WHILE '(' expression ')' '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 96
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 85
+
+   26 control_statement: '(' expression ')' '?' statement . ':' statement
+
+    ':'  shift, and go to state 97
+
+
+state 86
+
+   22 declaration_statement: DATA_TYPE VARIABLE ASSIGNMENT VALUE TERMINATOR .
+
+    $default  reduce using rule 22 (declaration_statement)
+
+
+state 87
+
+   53 function_declaration: DATA_TYPE function_name '(' ')' '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 98
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 88
+
+   43 parameter_list: DATA_TYPE VARIABLE . ',' parameter_list
+   44               | DATA_TYPE VARIABLE .
+
+    ','  shift, and go to state 99
+
+    $default  reduce using rule 44 (parameter_list)
+
+
+state 89
+
+   52 function_declaration: DATA_TYPE function_name '(' parameter_list ')' . '{' statement_list '}'
+
+    '{'  shift, and go to state 100
+
+
+state 90
+
+   47 argument_list: STRING ',' argument_list .
+
+    $default  reduce using rule 47 (argument_list)
+
+
+state 91
+
+   45 argument_list: VARIABLE ',' argument_list .
+
+    $default  reduce using rule 45 (argument_list)
+
+
+state 92
+
+   49 argument_list: VALUE ',' argument_list .
+
+    $default  reduce using rule 49 (argument_list)
+
+
+state 93
+
+   54 function_call: function_name '(' argument_list ')' TERMINATOR .
+
+    $default  reduce using rule 54 (function_call)
+
+
+state 94
+
+   23 control_statement: IF '(' expression ')' '{' statement_list . '}'
+   24                  | IF '(' expression ')' '{' statement_list . '}' ELSE '{' statement_list '}'
+   25                  | IF '(' expression ')' '{' statement_list . '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '}'  shift, and go to state 101
+
+
+state 95
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE . '{' statement_list '}'
+   28      | FOR VARIABLE ASSIGNMENT VALUE ',' VALUE . ',' VALUE '{' statement_list '}'
+
+    '{'  shift, and go to state 102
+    ','  shift, and go to state 103
+
+
+state 96
+
+   29 loops: WHILE '(' expression ')' '{' statement_list . '}'
+
+    '}'  shift, and go to state 104
+
+
+state 97
+
+   26 control_statement: '(' expression ')' '?' statement ':' . statement
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement              go to state 105
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 98
+
+   53 function_declaration: DATA_TYPE function_name '(' ')' '{' statement_list . '}'
+
+    '}'  shift, and go to state 106
+
+
+state 99
+
+   43 parameter_list: DATA_TYPE VARIABLE ',' . parameter_list
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+
+    DATA_TYPE       go to state 75
+    parameter_list  go to state 107
+
+
+state 100
+
+   52 function_declaration: DATA_TYPE function_name '(' parameter_list ')' '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 108
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 101
+
+   23 control_statement: IF '(' expression ')' '{' statement_list '}' .
+   24                  | IF '(' expression ')' '{' statement_list '}' . ELSE '{' statement_list '}'
+   25                  | IF '(' expression ')' '{' statement_list '}' . ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    ELIF  shift, and go to state 109
+    ELSE  shift, and go to state 110
+
+    $default  reduce using rule 23 (control_statement)
+
+
+state 102
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 111
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 103
+
+   28 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' . VALUE '{' statement_list '}'
+
+    INT    shift, and go to state 10
+    FLOAT  shift, and go to state 11
+    CHAR   shift, and go to state 12
+    BOOL   shift, and go to state 13
+
+    VALUE  go to state 112
+
+
+state 104
+
+   29 loops: WHILE '(' expression ')' '{' statement_list '}' .
+
+    $default  reduce using rule 29 (loops)
+
+
+state 105
+
+   26 control_statement: '(' expression ')' '?' statement ':' statement .
+
+    $default  reduce using rule 26 (control_statement)
+
+
+state 106
+
+   53 function_declaration: DATA_TYPE function_name '(' ')' '{' statement_list '}' .
+
+    $default  reduce using rule 53 (function_declaration)
+
+
+state 107
+
+   43 parameter_list: DATA_TYPE VARIABLE ',' parameter_list .
+
+    $default  reduce using rule 43 (parameter_list)
+
+
+state 108
+
+   52 function_declaration: DATA_TYPE function_name '(' parameter_list ')' '{' statement_list . '}'
+
+    '}'  shift, and go to state 113
+
+
+state 109
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF . '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '('  shift, and go to state 114
+
+
+state 110
+
+   24 control_statement: IF '(' expression ')' '{' statement_list '}' ELSE . '{' statement_list '}'
+
+    '{'  shift, and go to state 115
+
+
+state 111
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE '{' statement_list . '}'
+
+    '}'  shift, and go to state 116
+
+
+state 112
+
+   28 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE . '{' statement_list '}'
+
+    '{'  shift, and go to state 117
+
+
+state 113
+
+   52 function_declaration: DATA_TYPE function_name '(' parameter_list ')' '{' statement_list '}' .
+
+    $default  reduce using rule 52 (function_declaration)
+
+
+state 114
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' . expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
+
+    INT       shift, and go to state 10
+    FLOAT     shift, and go to state 11
+    CHAR      shift, and go to state 12
+    BOOL      shift, and go to state 13
+    VARIABLE  shift, and go to state 36
+
+    VALUE       go to state 20
+    expression  go to state 118
+
+
+state 115
+
+   24 control_statement: IF '(' expression ')' '{' statement_list '}' ELSE '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 119
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 116
+
+   27 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE '{' statement_list '}' .
+
+    $default  reduce using rule 27 (loops)
+
+
+state 117
+
+   28 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 120
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 118
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression . ')' '{' statement_list '}' ELSE '{' statement_list '}'
+   38 expression: expression . operator expression
+
+    UNARY       shift, and go to state 45
+    BINARY      shift, and go to state 46
+    ARITHMATIC  shift, and go to state 47
+    LOGICAL     shift, and go to state 48
+    ASSIGNMENT  shift, and go to state 49
+    ')'         shift, and go to state 121
+
+    operator  go to state 51
+
+
+state 119
+
+   24 control_statement: IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list . '}'
+
+    '}'  shift, and go to state 122
+
+
+state 120
+
+   28 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list . '}'
+
+    '}'  shift, and go to state 123
+
+
+state 121
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' . '{' statement_list '}' ELSE '{' statement_list '}'
+
+    '{'  shift, and go to state 124
+
+
+state 122
+
+   24 control_statement: IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' .
+
+    $default  reduce using rule 24 (control_statement)
+
+
+state 123
+
+   28 loops: FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list '}' .
+
+    $default  reduce using rule 28 (loops)
+
+
+state 124
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' . statement_list '}' ELSE '{' statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 125
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 125
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list . '}' ELSE '{' statement_list '}'
+
+    '}'  shift, and go to state 126
+
+
+state 126
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' . ELSE '{' statement_list '}'
+
+    ELSE  shift, and go to state 127
+
+
+state 127
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE . '{' statement_list '}'
+
+    '{'  shift, and go to state 128
+
+
+state 128
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' . statement_list '}'
+
+    TYPE_INT    shift, and go to state 1
+    TYPE_FLOAT  shift, and go to state 2
+    TYPE_CHAR   shift, and go to state 3
+    TYPE_BOOL   shift, and go to state 4
+    IF          shift, and go to state 5
+    FOR         shift, and go to state 6
+    WHILE       shift, and go to state 7
+    RETURN      shift, and go to state 8
+    BREAK       shift, and go to state 9
+    INT         shift, and go to state 10
+    FLOAT       shift, and go to state 11
+    CHAR        shift, and go to state 12
+    BOOL        shift, and go to state 13
+    VARIABLE    shift, and go to state 14
+    '('         shift, and go to state 15
+
+    statement_list         go to state 129
+    statement              go to state 18
+    DATA_TYPE              go to state 19
+    VALUE                  go to state 20
+    declaration_statement  go to state 21
+    control_statement      go to state 22
+    loops                  go to state 23
+    break_statement        go to state 24
+    return_statement       go to state 25
+    expression             go to state 26
+    expression_statement   go to state 27
+    assignment_statement   go to state 28
+    function_name          go to state 29
+    function_declaration   go to state 30
+    function_call          go to state 31
+
+
+state 129
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list . '}'
+
+    '}'  shift, and go to state 130
+
+
+state 130
+
+   25 control_statement: IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' .
+
+    $default  reduce using rule 25 (control_statement)

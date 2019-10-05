@@ -48,6 +48,8 @@
 %token ELSE
 %token FOR
 %token WHILE
+%token RETURN
+%token BREAK
 
 /* Data Tokens */
 %token <ival> INT
@@ -64,30 +66,38 @@
 // make a real one shortly:
 program:    statement_list;
 
-statement_list: statement_list statement | statement;
+statement_list: statement statement_list | statement;
 
 statement:      declaration_statement
             |   assignment_statement
             |   expression_statement
             |   control_statement
-            |   loops ;
+            |   function_declaration
+            |   function_call
+            |   loops
+            |   break_statement
+            |   return_statement;
 
-DATA_TYPE:  TYPE_INT | TYPE_FLOAT | TYPE_CHAR | TYPE_BOOL;
+DATA_TYPE:              TYPE_INT | TYPE_FLOAT | TYPE_CHAR | TYPE_BOOL;
 
-VALUE:  INT | FLOAT | CHAR | BOOL;
+VALUE:                  INT | FLOAT | CHAR | BOOL;
 
 declaration_statement:      DATA_TYPE VARIABLE TERMINATOR {cout << line_number << ": Declaration without definition" << endl;}
                         |   DATA_TYPE VARIABLE ASSIGNMENT VALUE TERMINATOR {cout << line_number << ": Declaration with definition" << endl;};
 
 control_statement:        IF '(' expression ')' '{' statement_list '}' {cout << line_number << ": IF stmt" << endl;}
                         | IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELSE stmt" << endl;}
-                        | IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' 
+                        | IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
                                 {cout << line_number << ": IF ELIF ELSE stmt" << endl;}
                         | '(' expression ')' '?' statement ':' statement {cout << line_number << ": Conditional IF stmt" << endl;};
 
 loops:                    FOR VARIABLE ASSIGNMENT VALUE ',' VALUE '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl;}
                         | FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl;}
                         | WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl;} ;
+
+break_statement:        BREAK TERMINATOR{cout << line_number << ": BREAK" << endl;};
+
+return_statement:       RETURN expression TERMINATOR {cout << line_number << ": RETURN expression" << endl;} | RETURN TERMINATOR {cout << line_number << ": RETURN without expression" << endl;}
 
 operator:               UNARY | BINARY | ARITHMATIC | LOGICAL | ASSIGNMENT;
 
@@ -96,6 +106,16 @@ expression:             expression operator expression | VARIABLE | VALUE;
 expression_statement:   expression TERMINATOR;
 
 assignment_statement:   VARIABLE ASSIGNMENT expression TERMINATOR;
+
+parameter_list:         DATA_TYPE VARIABLE ',' parameter_list | DATA_TYPE VARIABLE;
+
+argument_list:          VARIABLE ',' argument_list | VARIABLE | STRING ',' argument_list | STRING | VALUE ',' argument_list | VALUE;
+
+function_name:          VARIABLE;
+
+function_declaration:   DATA_TYPE function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;} | DATA_TYPE function_name '(' ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;};
+
+function_call:          function_name '(' argument_list ')' TERMINATOR {cout << line_number << ": Function call with arguments" << endl;} | function_name '(' ')' TERMINATOR {cout << line_number << ": Function call without arguments" << endl;};
 %%
 
 int main(int, char**) {

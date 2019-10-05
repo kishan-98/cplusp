@@ -1,5 +1,5 @@
 int a;
-int b = 5;
+int b = -5;
 float b = 5;
 char b = 's';
 bool b = true;
@@ -11,7 +11,6 @@ if (abc == 5)
 {
     cas = abc+asb;
 }
-
 
 if (abc == 5)
 {
@@ -29,7 +28,7 @@ if (abc == 5)
 }
 elif(abc >= 5)
 {
-    sadasd = sad - sad ; 
+    sadasd = sad - sad ;
 }
 else
 {
@@ -37,7 +36,7 @@ else
 }
 
 
-(a == b)? a=b+5; : a=c+10; 
+(a == b)? a=b+5; : a=c+10;
 
 
 for a = 2,8
@@ -45,7 +44,7 @@ for a = 2,8
     c = c + 1;
     asdsad = 5 + 5;
     asdsda = asdasd + 45;
-    (a == b)? a=b+5; : a=c+10; 
+    (a == b)? a=b+5; : a=c+10;
 }
 
 

@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := cplusp
 
 cplusp.tab.c cplusp.tab.h: cplusp.y
-	bison -d cplusp.y
+	bison -dv cplusp.y
 
 lex.yy.c: cplusp.l cplusp.tab.h
 	flex cplusp.l
