@@ -1,6 +1,22 @@
 ### TO-DO
-[ ] Precedence - operator and non-operator
-[ ] Brackets in expressions
-[ ] Functions, decl. and call
-[ ] I/O stmts
-[ ] break, return
+- [x] Make Scanner to scan next token using FLEX
+- [x] Make Parser to scan next token using YACC/BISON
+- [x] Phase 1:
+    - [x] Declaration
+    - [x] Assignment
+    - [x] Expression
+    - [x] Loops
+    - [x] Control Statements
+- [x] Phase 2:
+    - [x] Function declaration
+    - [x] Function call
+    - [x] String Data Type
+- [x] Phase 3:
+    - [x] Array and Matrix support
+    - [x] Data-type type casting
+    - [x] Sample Codes added
+- [ ] Phase 4:
+    - [ ] Make Abstract Syntax Tree(AST) of the Grammar using Data Structures
+    - [ ] Make Parse Tree
+    - [ ] Make Semantic Parser from AST and Parse Tree along with Symbol Table
+
