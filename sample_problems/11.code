@@ -1,0 +1,15 @@
+char filepath[1000];
+char line[100000];
+int alph[26] = {0};
+for i = 1, 26{
+	alph[i] = 0;
+}
+scan(filepath);
+File f = open(filepath);
+while(line = readline(f)){
+	int n = strlen(line);
+	for i = 1, n{
+		alph[int(line[i])] = alph[int(line[i])] + 1;
+	}
+}
+print(alph);

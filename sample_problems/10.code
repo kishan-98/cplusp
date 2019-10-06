@@ -1,0 +1,33 @@
+int[][] product_matrices(int a, int b, int c, int d, int m1[][], int m2[][]){
+		int m3[a][d];
+		if(b != c){
+			print("Invalid matrix sizes");
+            return m3;
+		}
+		else{
+			for i = 1, a {
+				for k = 1, d{
+					m3[i][j] = 0;
+					for j = 1, b {
+						m3[i][k] = m3[i][k] + m1[i][j]*m2[j][k];
+					}
+				}
+			}
+		}
+		return m3;
+	}
+
+	int a, b, c, d;
+	scan(a, b, c, d);
+	int m1[a][b]; int m2[c][d];
+	for i = 1, a {
+		for j = 1, b {
+			scan(m1[i][j]);
+		}
+	}
+	for i = 1, c {
+		for j = 1, d {
+			scan(m2[i][j]);
+		}
+	}
+	print(sum_matrices(m1, m2));

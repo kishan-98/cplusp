@@ -24,7 +24,8 @@
   float fval;
   char *sval;
   char *vval;
-  char *isval;
+  char *inval;
+  char *dtype;
   char cval;
   bool bval;
 }
@@ -33,10 +34,7 @@
 // by convention), and associate each with a field of the %union:
 /* Terminal Tokens */
 
-%token TYPE_INT
-%token TYPE_FLOAT
-%token TYPE_CHAR
-%token TYPE_BOOL
+%token TYPE_VOID
 %token UNARY
 %token BINARY
 %token ARITHMATIC
@@ -58,64 +56,95 @@
 %token <bval> BOOL
 %token <sval> STRING
 %token <vval> VARIABLE
-%token <isval> INVALID
+%token <inval> INVALID
+%token <dtype> TYPE_INT
+%token <dtype> TYPE_FLOAT
+%token <dtype> TYPE_CHAR
+%token <dtype> TYPE_BOOL
+%token <dtype> TYPE_FILE
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
 // something silly to echo to the screen what bison gets from flex.  We'll
 // make a real one shortly:
-program:    statement_list;
+program:                    statement_list;
 
-statement_list: statement statement_list | statement;
+statement_list:             statement statement_list
+                        |   statement;
 
-statement:      declaration_statement
-            |   assignment_statement
-            |   expression_statement
-            |   control_statement
-            |   function_declaration
-            |   function_call
-            |   loops
-            |   break_statement
-            |   return_statement;
+statement:                  declaration_statement TERMINATOR
+                        |   assignment_statement TERMINATOR
+                        |   expression TERMINATOR
+                        |   control_statement
+                        |   function_declaration
+                        |   function_call TERMINATOR
+                        |   loops
+                        |   break_statement TERMINATOR
+                        |   return_statement TERMINATOR;
 
-DATA_TYPE:              TYPE_INT | TYPE_FLOAT | TYPE_CHAR | TYPE_BOOL;
+DATA_TYPE:                  TYPE_INT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
+                        |   TYPE_FLOAT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
+                        |   TYPE_CHAR {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
+                        |   TYPE_BOOL {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
+                        |   TYPE_INT '[' ']' {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
+                        |   TYPE_INT '[' ']' '[' ']' {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
+                        |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)};
 
-VALUE:                  INT | FLOAT | CHAR | BOOL;
+VALUE:                      INT | FLOAT | CHAR | BOOL;
 
-declaration_statement:      DATA_TYPE VARIABLE TERMINATOR {cout << line_number << ": Declaration without definition" << endl;}
-                        |   DATA_TYPE VARIABLE ASSIGNMENT VALUE TERMINATOR {cout << line_number << ": Declaration with definition" << endl;};
+declaration_statement:      DATA_TYPE variable_list;
 
-control_statement:        IF '(' expression ')' '{' statement_list '}' {cout << line_number << ": IF stmt" << endl;}
-                        | IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELSE stmt" << endl;}
-                        | IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}'
-                                {cout << line_number << ": IF ELIF ELSE stmt" << endl;}
-                        | '(' expression ')' '?' statement ':' statement {cout << line_number << ": Conditional IF stmt" << endl;};
+variable_list:              VARIABLE ',' variable_list {cout << line_number << ": Variable declaration without definition" << endl;}
+                        |   VARIABLE {cout << line_number << ": Variable declaration without definition" << endl;}
+                        |   VARIABLE ASSIGNMENT expression ',' variable_list {cout << line_number << ": Variable declaration with definition" << endl;}
+                        |   VARIABLE ASSIGNMENT expression {cout << line_number << ": Variable declaration with definition" << endl;}
+                        |   VARIABLE '[' expression ']' ',' variable_list {cout << line_number << ": Array declaration without definition" << endl;}
+                        |   VARIABLE '[' expression ']' {cout << line_number << ": Array declaration without definition" << endl;}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Array declaration with definition" << endl;}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Array declaration with definition" << endl;}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ',' variable_list {cout << line_number << ": Matrix declaration without definition" << endl;}
+                        |   VARIABLE '[' expression ']' '[' expression ']' {cout << line_number << ": Matrix declaration without definition" << endl;}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Matrix declaration with definition" << endl;}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl;};
 
-loops:                    FOR VARIABLE ASSIGNMENT VALUE ',' VALUE '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl;}
-                        | FOR VARIABLE ASSIGNMENT VALUE ',' VALUE ',' VALUE '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl;}
-                        | WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl;} ;
+control_statement:          IF '(' expression ')' '{' statement_list '}' {cout << line_number << ": IF stmt" << endl;}
+                        |   IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELSE stmt" << endl;}
+                        |   IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELIF ELSE stmt" << endl;}
+                        |   '(' expression ')' '?' statement ':' statement {cout << line_number << ": Conditional IF stmt" << endl;};
 
-break_statement:        BREAK TERMINATOR{cout << line_number << ": BREAK" << endl;};
+loops:                      FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl;}
+                        |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl;}
+                        |   WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl;} ;
 
-return_statement:       RETURN expression TERMINATOR {cout << line_number << ": RETURN expression" << endl;} | RETURN TERMINATOR {cout << line_number << ": RETURN without expression" << endl;}
+break_statement:            BREAK {cout << line_number << ": BREAK" << endl;};
 
-operator:               UNARY | BINARY | ARITHMATIC | LOGICAL | ASSIGNMENT;
+return_statement:           RETURN expression {cout << line_number << ": RETURN expression" << endl;} | RETURN {cout << line_number << ": RETURN without expression" << endl;}
 
-expression:             expression operator expression | VARIABLE | VALUE;
+operator:                   UNARY | BINARY | ARITHMATIC | LOGICAL | ASSIGNMENT;
 
-expression_statement:   expression TERMINATOR;
+expression:                 expression operator expression | '(' expression ')'
+                        |   VARIABLE | VARIABLE '[' expression ']' | VARIABLE '[' expression ']' '[' expression ']'
+                        |   VALUE | STRING {free($1);}
+                        |   function_call | assignment_statement;
 
-assignment_statement:   VARIABLE ASSIGNMENT expression TERMINATOR;
+assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl;};
 
-parameter_list:         DATA_TYPE VARIABLE ',' parameter_list | DATA_TYPE VARIABLE;
+parameter_list:             DATA_TYPE VARIABLE ',' parameter_list | DATA_TYPE VARIABLE
+                        |   DATA_TYPE VARIABLE '[' ']' ',' parameter_list | DATA_TYPE VARIABLE '[' ']'
+                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ',' parameter_list | DATA_TYPE VARIABLE '[' ']' '[' ']';
 
-argument_list:          VARIABLE ',' argument_list | VARIABLE | STRING ',' argument_list | STRING | VALUE ',' argument_list | VALUE;
+argument_list:              expression ',' argument_list | expression;
 
-function_name:          VARIABLE;
+function_name:              VARIABLE {cout << line_number << ": User-defined function" << endl;}
+                        |   DATA_TYPE {cout << line_number << ": Predefined function" << endl;};
 
-function_declaration:   DATA_TYPE function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;} | DATA_TYPE function_name '(' ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;};
+function_declaration:       DATA_TYPE function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   DATA_TYPE function_name '(' ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
+                        |   TYPE_VOID function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   TYPE_VOID function_name '(' ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;};
 
-function_call:          function_name '(' argument_list ')' TERMINATOR {cout << line_number << ": Function call with arguments" << endl;} | function_name '(' ')' TERMINATOR {cout << line_number << ": Function call without arguments" << endl;};
+function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;}
+                        |   function_name '(' ')' {cout << line_number << ": Function call without arguments" << endl;};
 %%
 
 int main(int, char**) {
@@ -131,11 +160,13 @@ int main(int, char**) {
 
   // Parse through the input:
   yyparse();
+  return 0;
 
 }
 
 void yyerror(const char *s) {
   cout << "EEK, parse error on line number " << line_number << "!  Message: " << s << endl;
   // might as well halt now:
-  exit(-1);
+  /* return line_number; */
+  exit(line_number);
 }

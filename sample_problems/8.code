@@ -1,0 +1,46 @@
+void merge(int st, int mid, int en, int a[]){
+		int left[mid - st + 1]; int right[en - st];
+		for i = st, mid {
+			left[i - st + 1] = a[i];
+		}
+		for i = mid + 1, en {
+			right[i - mid] = a[i];
+		}
+		int i = st, j = mid + 1;
+		while(i <= mid && j <= en){
+			if(left[i-st+1] <= right[j-mid]){
+				a[i] = left[i-st+1];
+				i = i + 1;
+			}
+			else{
+				a[i] = right[j-mid];
+				j = j + 1;
+			}
+		}
+		while(i <= mid){
+			a[i] = left[i-st+1];
+			i = i + 1;
+		}
+		while(j <= en){
+			a[i] = right[j-mid];
+			j = j + 1;
+		}
+	}
+
+	void sort(int st, int en, int a[]){
+		if(en > st){
+			int mid = st + (en-st)/2;
+			sort(st, mid, a);
+			sort(mid + 1, en, a);
+			merge(st, mid, en, a);
+		}
+	}
+
+	int n;
+	scan(n);
+	int a[n];
+	for i = 1, n {
+		scan(a[i]);
+	}
+	sort(1, n, a);
+	print(a[i]);

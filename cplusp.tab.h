@@ -39,57 +39,61 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     TYPE_INT = 258,
-     TYPE_FLOAT = 259,
-     TYPE_CHAR = 260,
-     TYPE_BOOL = 261,
-     UNARY = 262,
-     BINARY = 263,
-     ARITHMATIC = 264,
-     LOGICAL = 265,
-     ASSIGNMENT = 266,
-     TERMINATOR = 267,
-     IF = 268,
-     ELIF = 269,
-     ELSE = 270,
-     FOR = 271,
-     WHILE = 272,
-     RETURN = 273,
-     BREAK = 274,
-     INT = 275,
-     FLOAT = 276,
-     CHAR = 277,
-     BOOL = 278,
-     STRING = 279,
-     VARIABLE = 280,
-     INVALID = 281
+     TYPE_VOID = 258,
+     UNARY = 259,
+     BINARY = 260,
+     ARITHMATIC = 261,
+     LOGICAL = 262,
+     ASSIGNMENT = 263,
+     TERMINATOR = 264,
+     IF = 265,
+     ELIF = 266,
+     ELSE = 267,
+     FOR = 268,
+     WHILE = 269,
+     RETURN = 270,
+     BREAK = 271,
+     INT = 272,
+     FLOAT = 273,
+     CHAR = 274,
+     BOOL = 275,
+     STRING = 276,
+     VARIABLE = 277,
+     INVALID = 278,
+     TYPE_INT = 279,
+     TYPE_FLOAT = 280,
+     TYPE_CHAR = 281,
+     TYPE_BOOL = 282,
+     TYPE_FILE = 283
    };
 #endif
 /* Tokens.  */
-#define TYPE_INT 258
-#define TYPE_FLOAT 259
-#define TYPE_CHAR 260
-#define TYPE_BOOL 261
-#define UNARY 262
-#define BINARY 263
-#define ARITHMATIC 264
-#define LOGICAL 265
-#define ASSIGNMENT 266
-#define TERMINATOR 267
-#define IF 268
-#define ELIF 269
-#define ELSE 270
-#define FOR 271
-#define WHILE 272
-#define RETURN 273
-#define BREAK 274
-#define INT 275
-#define FLOAT 276
-#define CHAR 277
-#define BOOL 278
-#define STRING 279
-#define VARIABLE 280
-#define INVALID 281
+#define TYPE_VOID 258
+#define UNARY 259
+#define BINARY 260
+#define ARITHMATIC 261
+#define LOGICAL 262
+#define ASSIGNMENT 263
+#define TERMINATOR 264
+#define IF 265
+#define ELIF 266
+#define ELSE 267
+#define FOR 268
+#define WHILE 269
+#define RETURN 270
+#define BREAK 271
+#define INT 272
+#define FLOAT 273
+#define CHAR 274
+#define BOOL 275
+#define STRING 276
+#define VARIABLE 277
+#define INVALID 278
+#define TYPE_INT 279
+#define TYPE_FLOAT 280
+#define TYPE_CHAR 281
+#define TYPE_BOOL 282
+#define TYPE_FILE 283
 
 
 
@@ -102,12 +106,13 @@ typedef union YYSTYPE
   float fval;
   char *sval;
   char *vval;
-  char *isval;
+  char *inval;
+  char *dtype;
   char cval;
   bool bval;
 }
 /* Line 1529 of yacc.c.  */
-#line 111 "cplusp.tab.h"
+#line 116 "cplusp.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

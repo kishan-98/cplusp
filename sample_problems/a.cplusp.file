@@ -1,5 +1,5 @@
 int a;
-int b = -5;
+int b = 5;
 float b = 5;
 char b = 's';
 bool b = true;
@@ -63,3 +63,5 @@ while (a<=10)
     as = asda + sadsa;
     das = das + 1;
 }
+
+for a = 2,8{c = c+1;}
