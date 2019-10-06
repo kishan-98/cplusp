@@ -1,0 +1,23 @@
+bool is_word_unique(int n, char wordlist[][], char word[]){
+	for i = 1, n{
+		if(strcmp(wordlist[i], word)){
+			return false;
+		}
+	}
+	return true;
+}
+char filepath[1000];
+char word[100];
+char uniqword[100000][100];
+int uniqcount = 0;
+scan(filepath);
+File f = open(filepath);
+while(word = readword(f)){
+	if(is_word_unique(uniqcount, uniqword, word)){
+		uniqcount = uniqcount + 1;
+		uniqword[uniqcount] = word;
+	}
+}
+for i = 1, uniqcount{
+	print(uniqword[i]);
+}

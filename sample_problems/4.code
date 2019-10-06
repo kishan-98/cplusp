@@ -1,0 +1,8 @@
+int count = 0;
+for x = 1, 100000000 {
+	for y = 1, 100000000 {
+		z = x*x + y*y;
+		if(z <= 10000000000000000 && isInteger(sqrt(z))) {count = count + 1;}
+	}
+}
+print(count);

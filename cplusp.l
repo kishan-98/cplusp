@@ -12,15 +12,17 @@
 [\n]                    {   line_number++;  }
 [0-9]+                  {   yylval.ival = atoi(yytext); return INT;}
 [0-9]*\.[0-9]+          {   yylval.fval = atof(yytext); return FLOAT;}
--[0-9]+                 {   yylval.ival = atoi(yytext); return INT;}
--[0-9]*\.[0-9]+         {   yylval.fval = atof(yytext); return FLOAT;}
 \'[a-zA-Z0-9]\'         {   return CHAR;}
 true                    {   yylval.bval = true; return BOOL;}
+True                    {   yylval.bval = true; return BOOL;}
 false                   {   yylval.bval = false; return BOOL;}
-int                     {   return TYPE_INT;}
-float                   {   return TYPE_FLOAT;}
-char                    {   return TYPE_CHAR;}
-bool                    {   return TYPE_BOOL;}
+False                   {   yylval.bval = false; return BOOL;}
+int                     {   yylval.dtype = strdup(yytext); return TYPE_INT;}
+float                   {   yylval.dtype = strdup(yytext); return TYPE_FLOAT;}
+char                    {   yylval.dtype = strdup(yytext); return TYPE_CHAR;}
+bool                    {   yylval.dtype = strdup(yytext); return TYPE_BOOL;}
+File                    {   yylval.dtype = strdup(yytext); return TYPE_FILE;}
+void                    {   return TYPE_VOID;}
 =                       {   return ASSIGNMENT; }
 [!~]                    {   return UNARY;}
 [+\-*/%]                {   return ARITHMATIC;}
@@ -41,7 +43,7 @@ for                     {   return FOR; }
 while                   {   return WHILE; }
 return                  {   return RETURN; }
 break                   {   return BREAK; }
-[\(\)\{\}?:,]           {   return yytext[0]; }
+[\(\)\{\}?:,\[\]]       {   return yytext[0]; }
 
 [a-zA-Z]+[a-zA-Z0-9_]*  {   yylval.vval = strdup(yytext); return VARIABLE;}
 \"([a-zA-Z0-9]|[ ])+\"        {
@@ -51,5 +53,5 @@ break                   {   return BREAK; }
   // delete because strdup is a C function that uses malloc, not a C++
   // function that uses new.)
                         yylval.sval = strdup(yytext); return STRING;}
-.                   {   yylval.isval = strdup(yytext); return INVALID; }
+.                   {   yylval.inval = strdup(yytext); return INVALID; }
 %%

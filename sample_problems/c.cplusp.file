@@ -1,0 +1,50 @@
+return;
+break;
+
+for a = 2 , 8,   1{
+	break;
+}
+
+int main(){
+return 0;
+}
+
+int sum(int a, int b){
+	return a+b;
+}
+
+int[] get_i(int n){
+	int arr[n];
+	for i = 1, n{
+		arr[i] = i;
+	}
+	return arr;
+}
+
+int[][] get_i2(int n){
+	int arr[n][n];
+	for i = 1, n{
+		for j = 1, n{
+			arr[i][j] = i+j;
+		}
+	}
+	return arr;
+}
+
+int a = 5;
+int b = 2;
+float f = 2.5;
+
+F = int(f);
+int F = int(f);
+
+sum(a, b);
+sum(5,2);
+sum(5,b);
+
+main();
+
+char k = 'k';
+print(k);
+print(5);
+print("my name is", k);

@@ -1,0 +1,6 @@
+int N; int k;
+scan(N, k);
+int sum = 0;
+int temp_sum = 0;
+for i = 1,N { temp_sum = 1; for j = 1,k{temp_sum = temp_sum*i;} sum = sum + temp_sum;}
+print(sum);

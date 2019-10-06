@@ -1,0 +1,5 @@
+int N;
+scan(N);
+bool is_prime = true;
+for i = 2, sqrt(N) {if(N % i == 0) {is_prime = false; break;}}
+if (is_prime) {print("Prime");} else {print("Composite");}

@@ -1,0 +1,23 @@
+void perm(int i, int n, int a[]){
+	if(i > n){
+		return;
+	}
+	elif (i == n){
+		print(a);
+	}
+	else {
+		for j = i, n {
+			swap(a[i], a[j]);
+			perm(i + 1, n, a);
+			swap(a[i], a[j]);
+		}
+	}
+}
+
+	int n;
+	scan(n);
+	int a[n];
+	for i = 1, n {
+		a[n] = i;
+	}
+	perm(1, n, a);

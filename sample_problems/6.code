@@ -1,0 +1,17 @@
+int n;
+	scan(n);
+	int a[n];
+	for i = 1, n {
+		scan(a[i]);
+	}
+	for i = 1, n {
+		for j = i-1, 1, 1 {
+			if(a[j] <= a[j+1]){
+				break;
+			}
+			else{
+				swap(a[j], a[j+1]);
+			}
+		}
+	}
+	print(a);
