@@ -87,7 +87,8 @@
 // This is the actual grammar that bison will parse, but for right now it's just
 // something silly to echo to the screen what bison gets from flex.  We'll
 // make a real one shortly:
-program:                    statement_list ;
+program:                    statement_list
+                        |   {cout << "Empty file" << endl;} ;
 
 statement_list:             statement statement_list
                         |   statement ;
@@ -177,25 +178,22 @@ parameter_list:             DATA_TYPE VARIABLE ','                  parameter_li
                         |   DATA_TYPE VARIABLE '[' ']' ','          parameter_list
                         |   DATA_TYPE VARIABLE '[' ']'
                         |   DATA_TYPE VARIABLE '[' ']' '[' ']' ','  parameter_list
-                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ;
+                        |   DATA_TYPE VARIABLE '[' ']' '[' ']'
+                        |   ;
 
 argument_list:              expression ',' argument_list
-                        |   expression ;
+                        |   expression
+                        |   ;
 
 function_name:              VARIABLE    {cout << line_number << ": User-defined function" << endl;}
                         |   DATA_TYPE   {cout << line_number << ": Predefined function" << endl;} ;
 
-function_declaration:       DATA_TYPE                   function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   DATA_TYPE                   function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
-                        |   DATA_TYPE '[' ']'           function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   DATA_TYPE '[' ']'           function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
-                        |   DATA_TYPE '[' ']' '[' ']'   function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   DATA_TYPE '[' ']' '[' ']'   function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
-                        |   TYPE_VOID                   function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   TYPE_VOID                   function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;} ;
+function_declaration:       DATA_TYPE                   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   DATA_TYPE '[' ']'           function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   DATA_TYPE '[' ']' '[' ']'   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   TYPE_VOID                   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;} ;
 
-function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;}
-                        |   function_name '(' ')' {cout << line_number << ": Function call without arguments" << endl;} ;
+function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;} ;
 %%
 
 int main(int, char**) {
