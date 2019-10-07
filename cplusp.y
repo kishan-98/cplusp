@@ -32,14 +32,20 @@
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
 // by convention), and associate each with a field of the %union:
-/* Terminal Tokens */
 
+/* Terminal Tokens */
 %token TYPE_VOID
-%token UNARY
-%token BINARY
-%token ARITHMATIC
-%token LOGICAL
 %token ASSIGNMENT
+%token LSHIFT
+%token RSHIFT
+%token LT
+%token GT
+%token EQ
+%token NE
+%token LE
+%token GE
+%token LOGAND
+%token LOGOR
 %token TERMINATOR
 %token IF
 %token ELIF
@@ -63,16 +69,30 @@
 %token <dtype> TYPE_BOOL
 %token <dtype> TYPE_FILE
 
+/* Operator Associativity */
+%right  ASSIGNMENT
+%left   LOGOR
+%left   LOGAND
+%left   '|'
+%left   '^'
+%left   '&'
+%left   EQ NE
+%left   GT GE LT LE
+%left   LSHIFT RSHIFT
+%left   '+' '-'
+%left   '*' '/' '%'
+%left   '(' ')'
+
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
 // something silly to echo to the screen what bison gets from flex.  We'll
 // make a real one shortly:
-program:                    statement_list;
+program:                    statement_list ;
 
 statement_list:             statement statement_list
-                        |   statement;
+                        |   statement ;
 
-statement:                  declaration_statement TERMINATOR
+statement:                  declaration_statement
                         |   assignment_statement TERMINATOR
                         |   expression TERMINATOR
                         |   control_statement
@@ -80,19 +100,17 @@ statement:                  declaration_statement TERMINATOR
                         |   function_call TERMINATOR
                         |   loops
                         |   break_statement TERMINATOR
-                        |   return_statement TERMINATOR;
+                        |   return_statement TERMINATOR ;
 
 DATA_TYPE:                  TYPE_INT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
                         |   TYPE_FLOAT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
                         |   TYPE_CHAR {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
                         |   TYPE_BOOL {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_INT '[' ']' {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_INT '[' ']' '[' ']' {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)};
+                        |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)} ;
 
-VALUE:                      INT | FLOAT | CHAR | BOOL;
+VALUE:                      INT | FLOAT | CHAR | BOOL ;
 
-declaration_statement:      DATA_TYPE variable_list;
+declaration_statement:      DATA_TYPE variable_list TERMINATOR;
 
 variable_list:              VARIABLE ',' variable_list {cout << line_number << ": Variable declaration without definition" << endl;}
                         |   VARIABLE {cout << line_number << ": Variable declaration without definition" << endl;}
@@ -105,46 +123,79 @@ variable_list:              VARIABLE ',' variable_list {cout << line_number << "
                         |   VARIABLE '[' expression ']' '[' expression ']' ',' variable_list {cout << line_number << ": Matrix declaration without definition" << endl;}
                         |   VARIABLE '[' expression ']' '[' expression ']' {cout << line_number << ": Matrix declaration without definition" << endl;}
                         |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Matrix declaration with definition" << endl;}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl;};
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl;} ;
 
 control_statement:          IF '(' expression ')' '{' statement_list '}' {cout << line_number << ": IF stmt" << endl;}
                         |   IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELSE stmt" << endl;}
                         |   IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELIF ELSE stmt" << endl;}
-                        |   '(' expression ')' '?' statement ':' statement {cout << line_number << ": Conditional IF stmt" << endl;};
+                        |   '(' expression ')' '?' statement ':' statement {cout << line_number << ": Conditional IF stmt" << endl;} ;
 
 loops:                      FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl;}
                         |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl;}
                         |   WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl;} ;
 
-break_statement:            BREAK {cout << line_number << ": BREAK" << endl;};
+break_statement:            BREAK {cout << line_number << ": BREAK" << endl;} ;
 
-return_statement:           RETURN expression {cout << line_number << ": RETURN expression" << endl;} | RETURN {cout << line_number << ": RETURN without expression" << endl;}
+return_statement:           RETURN expression   {cout << line_number << ": RETURN expression" << endl;}
+                        |   RETURN              {cout << line_number << ": RETURN without expression" << endl;} ;
 
-operator:                   UNARY | BINARY | ARITHMATIC | LOGICAL | ASSIGNMENT;
+/* operator:                   ASSIGNMENT | LOGOR | LOGAND | '|' | '^' | '&' | EQ | NE | GT | GE | LT | LE | LSHIFT | RSHIFT | '+' | '-' | '*' | '/' | '%'; */
 
-expression:                 expression operator expression | '(' expression ')'
-                        |   VARIABLE | VARIABLE '[' expression ']' | VARIABLE '[' expression ']' '[' expression ']'
-                        |   VALUE | STRING {free($1);}
-                        |   function_call | assignment_statement;
+expression:                 expression ASSIGNMENT   expression
+                        |   expression LOGOR        expression
+                        |   expression LOGAND       expression
+                        |   expression '|'          expression
+                        |   expression '^'          expression
+                        |   expression '&'          expression
+                        |   expression EQ           expression
+                        |   expression NE           expression
+                        |   expression GT           expression
+                        |   expression GE           expression
+                        |   expression LT           expression
+                        |   expression LE           expression
+                        |   expression LSHIFT       expression
+                        |   expression RSHIFT       expression
+                        |   expression '+'          expression
+                        |   expression '-'          expression
+                        |   expression '*'          expression
+                        |   expression '/'          expression
+                        |   expression '%'          expression
+                        |   '(' expression ')'
+                        |   '-' expression
+                        |   VARIABLE
+                        |   VARIABLE '[' expression ']'
+                        |   VARIABLE '[' expression ']' '[' expression ']'
+                        |   VALUE
+                        |   STRING {free($1);}
+                        |   function_call
+                        |   assignment_statement ;
 
-assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl;};
+assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl;} ;
 
-parameter_list:             DATA_TYPE VARIABLE ',' parameter_list | DATA_TYPE VARIABLE
-                        |   DATA_TYPE VARIABLE '[' ']' ',' parameter_list | DATA_TYPE VARIABLE '[' ']'
-                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ',' parameter_list | DATA_TYPE VARIABLE '[' ']' '[' ']';
+parameter_list:             DATA_TYPE VARIABLE ','                  parameter_list
+                        |   DATA_TYPE VARIABLE
+                        |   DATA_TYPE VARIABLE '[' ']' ','          parameter_list
+                        |   DATA_TYPE VARIABLE '[' ']'
+                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ','  parameter_list
+                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ;
 
-argument_list:              expression ',' argument_list | expression;
+argument_list:              expression ',' argument_list
+                        |   expression ;
 
-function_name:              VARIABLE {cout << line_number << ": User-defined function" << endl;}
-                        |   DATA_TYPE {cout << line_number << ": Predefined function" << endl;};
+function_name:              VARIABLE    {cout << line_number << ": User-defined function" << endl;}
+                        |   DATA_TYPE   {cout << line_number << ": Predefined function" << endl;} ;
 
-function_declaration:       DATA_TYPE function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   DATA_TYPE function_name '(' ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
-                        |   TYPE_VOID function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   TYPE_VOID function_name '(' ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;};
+function_declaration:       DATA_TYPE                   function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   DATA_TYPE                   function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
+                        |   DATA_TYPE '[' ']'           function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   DATA_TYPE '[' ']'           function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
+                        |   DATA_TYPE '[' ']' '[' ']'   function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   DATA_TYPE '[' ']' '[' ']'   function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;}
+                        |   TYPE_VOID                   function_name '(' parameter_list    ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+                        |   TYPE_VOID                   function_name '('                   ')' '{' statement_list '}' {cout << line_number << ": Function declaration without parameters" << endl;} ;
 
 function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;}
-                        |   function_name '(' ')' {cout << line_number << ": Function call without arguments" << endl;};
+                        |   function_name '(' ')' {cout << line_number << ": Function call without arguments" << endl;} ;
 %%
 
 int main(int, char**) {

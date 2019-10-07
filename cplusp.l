@@ -24,17 +24,17 @@ bool                    {   yylval.dtype = strdup(yytext); return TYPE_BOOL;}
 File                    {   yylval.dtype = strdup(yytext); return TYPE_FILE;}
 void                    {   return TYPE_VOID;}
 =                       {   return ASSIGNMENT; }
-[!~]                    {   return UNARY;}
-[+\-*/%]                {   return ARITHMATIC;}
-[&|^<>]                 {   return BINARY;}
-"<<"                    {   return BINARY;}
-">>"                    {   return BINARY;}
-"=="                    {   return BINARY;}
-"!="                    {   return BINARY;}
-"<="                    {   return BINARY;}
-">="                    {   return BINARY;}
-"&&"                    {   return LOGICAL;}
-"||"                    {   return LOGICAL;}
+[!~+\-*/%&|^]           {   return yytext[0];}
+"<<"                    {   return LSHIFT;}
+">>"                    {   return RSHIFT;}
+"<"                     {   return LT;}
+">"                     {   return GT;}
+"=="                    {   return EQ;}
+"!="                    {   return NE;}
+"<="                    {   return LE;}
+">="                    {   return GE;}
+"&&"                    {   return LOGAND;}
+"||"                    {   return LOGOR;}
 ;                       {   return TERMINATOR; }
 if                      {   return IF; }
 elif                    {   return ELIF; }
