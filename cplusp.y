@@ -113,26 +113,26 @@ VALUE:                      INT | FLOAT | CHAR | BOOL ;
 
 declaration_statement:      DATA_TYPE variable_list TERMINATOR;
 
-variable_list:              VARIABLE ',' variable_list {cout << line_number << ": Variable declaration without definition" << endl;}
-                        |   VARIABLE {cout << line_number << ": Variable declaration without definition" << endl;}
-                        |   VARIABLE ASSIGNMENT expression ',' variable_list {cout << line_number << ": Variable declaration with definition" << endl;}
-                        |   VARIABLE ASSIGNMENT expression {cout << line_number << ": Variable declaration with definition" << endl;}
-                        |   VARIABLE '[' expression ']' ',' variable_list {cout << line_number << ": Array declaration without definition" << endl;}
-                        |   VARIABLE '[' expression ']' {cout << line_number << ": Array declaration without definition" << endl;}
-                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Array declaration with definition" << endl;}
-                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Array declaration with definition" << endl;}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ',' variable_list {cout << line_number << ": Matrix declaration without definition" << endl;}
-                        |   VARIABLE '[' expression ']' '[' expression ']' {cout << line_number << ": Matrix declaration without definition" << endl;}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Matrix declaration with definition" << endl;}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl;} ;
+variable_list:              VARIABLE ',' variable_list {cout << line_number << ": Variable declaration without definition" << endl; free($1);}
+                        |   VARIABLE {cout << line_number << ": Variable declaration without definition" << endl; free($1);}
+                        |   VARIABLE ASSIGNMENT expression ',' variable_list {cout << line_number << ": Variable declaration with definition" << endl; free($1);}
+                        |   VARIABLE ASSIGNMENT expression {cout << line_number << ": Variable declaration with definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' ',' variable_list {cout << line_number << ": Array declaration without definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' {cout << line_number << ": Array declaration without definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Array declaration with definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Array declaration with definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ',' variable_list {cout << line_number << ": Matrix declaration without definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' {cout << line_number << ": Matrix declaration without definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Matrix declaration with definition" << endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl; free($1);} ;
 
 control_statement:          IF '(' expression ')' '{' statement_list '}' {cout << line_number << ": IF stmt" << endl;}
                         |   IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELSE stmt" << endl;}
                         |   IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELIF ELSE stmt" << endl;}
                         |   '(' expression ')' '?' statement ':' statement {cout << line_number << ": Conditional IF stmt" << endl;} ;
 
-loops:                      FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl;}
-                        |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl;}
+loops:                      FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl; free($2);}
+                        |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl; free($2);}
                         |   WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl;} ;
 
 break_statement:            BREAK {cout << line_number << ": BREAK" << endl;} ;
@@ -163,9 +163,9 @@ expression:                 expression ASSIGNMENT   expression
                         |   expression '%'          expression
                         |   '(' expression ')'
                         |   '-' expression
-                        |   VARIABLE
-                        |   VARIABLE '[' expression ']'
-                        |   VARIABLE '[' expression ']' '[' expression ']'
+                        |   VARIABLE {free($1);}
+                        |   VARIABLE '[' expression ']' {free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' {free($1);}
                         |   VALUE
                         |   STRING {free($1);}
                         |   function_call
@@ -173,19 +173,19 @@ expression:                 expression ASSIGNMENT   expression
 
 assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl;} ;
 
-parameter_list:             DATA_TYPE VARIABLE ','                  parameter_list
-                        |   DATA_TYPE VARIABLE
-                        |   DATA_TYPE VARIABLE '[' ']' ','          parameter_list
-                        |   DATA_TYPE VARIABLE '[' ']'
-                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ','  parameter_list
-                        |   DATA_TYPE VARIABLE '[' ']' '[' ']'
+parameter_list:             DATA_TYPE VARIABLE ','                  parameter_list  {free($2);}
+                        |   DATA_TYPE VARIABLE                                      {free($2);}
+                        |   DATA_TYPE VARIABLE '[' ']' ','          parameter_list  {free($2);}
+                        |   DATA_TYPE VARIABLE '[' ']'                              {free($2);}
+                        |   DATA_TYPE VARIABLE '[' ']' '[' ']' ','  parameter_list  {free($2);}
+                        |   DATA_TYPE VARIABLE '[' ']' '[' ']'                      {free($2);}
                         |   ;
 
 argument_list:              expression ',' argument_list
                         |   expression
                         |   ;
 
-function_name:              VARIABLE    {cout << line_number << ": User-defined function" << endl;}
+function_name:              VARIABLE    {cout << line_number << ": User-defined function" << endl; free($1);}
                         |   DATA_TYPE   {cout << line_number << ": Predefined function" << endl;} ;
 
 function_declaration:       DATA_TYPE                   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
