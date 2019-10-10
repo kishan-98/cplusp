@@ -103,11 +103,11 @@ statement:                  declaration_statement
                         |   break_statement TERMINATOR
                         |   return_statement TERMINATOR ;
 
-DATA_TYPE:                  TYPE_INT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_FLOAT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_CHAR {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_BOOL {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)}
-                        |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1)} ;
+DATA_TYPE:                  TYPE_INT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);}
+                        |   TYPE_FLOAT {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);}
+                        |   TYPE_CHAR {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);}
+                        |   TYPE_BOOL {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);}
+                        |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);} ;
 
 VALUE:                      INT | FLOAT | CHAR | BOOL ;
 
