@@ -1,6 +1,6 @@
-cplusp.tab.c
-cplusp.tab.h
-lex.yy.c
+*.o
+*.tab.*
+lex.yy.*
 cplusp
 check_all.sh
 

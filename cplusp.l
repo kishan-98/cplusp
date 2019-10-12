@@ -1,6 +1,6 @@
 %{
-  #include <cstdio>
-  #include "cplusp.tab.h"  // to get the token types from Bison
+  #include "cplusp.h"       // for AST
+  #include "cplusp.tab.h"   // to get the token types from Bison
   /* #include <iostream>
   using namespace std;
   extern int yylex(); */
