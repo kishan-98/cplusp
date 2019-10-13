@@ -12,7 +12,7 @@
 [\n]                    {   line_number++;  }
 [0-9]+                  {   yylval.ival = atoi(yytext); return INT;}
 [0-9]*\.[0-9]+          {   yylval.fval = atof(yytext); return FLOAT;}
-\'[a-zA-Z0-9]\'         {   return CHAR;}
+\'[a-zA-Z0-9]\'         {   yylval.cval = yytext[1]; return CHAR;}
 true                    {   yylval.bval = true; return BOOL;}
 True                    {   yylval.bval = true; return BOOL;}
 false                   {   yylval.bval = false; return BOOL;}

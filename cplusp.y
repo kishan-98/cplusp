@@ -102,8 +102,8 @@
 // This is the actual grammar that bison will parse, but for right now it's just
 // something silly to echo to the screen what bison gets from flex.  We'll
 // make a real one shortly:
-program:                    statement_list { $$ = new program_node($1); root = $$; }
-                        |   {cout << "Empty file" << endl; $$ = new program_node(new list<statement_node *>()); root = $$; } ;
+program:                    statement_list { $$ = new program_node($1, true); root = $$; }
+                        |   {cout << "Empty file" << endl; $$ = new program_node(new list<statement_node *>(), true); root = $$; } ;
 
 statement_list:             statement statement_list { $2->push_front($1); $$ = $2; }
                         |   statement { $$ = new list<statement_node *>(1, $1); };
@@ -124,10 +124,10 @@ statement:                  assignment_statement TERMINATOR { $$ = $1; } ;
                         |   TYPE_BOOL {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);}
                         |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);} ; */
 
-value:                      INT { $$ = new value_node($1); }
-                        |   FLOAT { $$ = new value_node($1); } ;
-                        /* |   CHAR
-                        |   BOOL ; */
+value:                      INT { $$ = new value_node($1, false); }
+                        |   FLOAT { $$ = new value_node($1, false); }
+                        |   CHAR { $$ = new value_node($1, false); }
+                        |   BOOL { $$ = new value_node($1, false); } ;
 
 /* declaration_statement:      data_type variable_list TERMINATOR; */
 
@@ -160,27 +160,27 @@ value:                      INT { $$ = new value_node($1); }
 
 /* operator:                   ASSIGNMENT | LOGOR | LOGAND | '|' | '^' | '&' | EQ | NE | GT | GE | LT | LE | LSHIFT | RSHIFT | '+' | '-' | '*' | '/' | '%'; */
 
-expression:                 expression LOGOR        expression  { $$ = new operator_node($1, "||", $3); }
-                        |   expression LOGAND       expression  { $$ = new operator_node($1, "&&", $3); }
-                        |   expression '|'          expression  { $$ = new operator_node($1, "|", $3); }
-                        |   expression '^'          expression  { $$ = new operator_node($1, "^", $3); }
-                        |   expression '&'          expression  { $$ = new operator_node($1, "&", $3); }
-                        |   expression EQ           expression  { $$ = new operator_node($1, "==", $3); }
-                        |   expression NE           expression  { $$ = new operator_node($1, "!=", $3); }
-                        |   expression GT           expression  { $$ = new operator_node($1, ">", $3); }
-                        |   expression GE           expression  { $$ = new operator_node($1, ">=", $3); }
-                        |   expression LT           expression  { $$ = new operator_node($1, "<", $3); }
-                        |   expression LE           expression  { $$ = new operator_node($1, "<=", $3); }
-                        |   expression LSHIFT       expression  { $$ = new operator_node($1, "<<", $3); }
-                        |   expression RSHIFT       expression  { $$ = new operator_node($1, ">>", $3); }
-                        |   expression '+'          expression  { $$ = new operator_node($1, "+", $3); }
-                        |   expression '-'          expression  { $$ = new operator_node($1, "-", $3); }
-                        |   expression '*'          expression  { $$ = new operator_node($1, "*", $3); }
-                        |   expression '/'          expression  { $$ = new operator_node($1, "/", $3); }
-                        |   expression '%'          expression  { $$ = new operator_node($1, "%", $3); }
+expression:                 expression LOGOR        expression  { $$ = new operator_node($1, "||", $3, false); }
+                        |   expression LOGAND       expression  { $$ = new operator_node($1, "&&", $3, false); }
+                        |   expression '|'          expression  { $$ = new operator_node($1, "|", $3, false); }
+                        |   expression '^'          expression  { $$ = new operator_node($1, "^", $3, false); }
+                        |   expression '&'          expression  { $$ = new operator_node($1, "&", $3, false); }
+                        |   expression EQ           expression  { $$ = new operator_node($1, "==", $3, false); }
+                        |   expression NE           expression  { $$ = new operator_node($1, "!=", $3, false); }
+                        |   expression GT           expression  { $$ = new operator_node($1, ">", $3, false); }
+                        |   expression GE           expression  { $$ = new operator_node($1, ">=", $3, false); }
+                        |   expression LT           expression  { $$ = new operator_node($1, "<", $3, false); }
+                        |   expression LE           expression  { $$ = new operator_node($1, "<=", $3, false); }
+                        |   expression LSHIFT       expression  { $$ = new operator_node($1, "<<", $3, false); }
+                        |   expression RSHIFT       expression  { $$ = new operator_node($1, ">>", $3, false); }
+                        |   expression '+'          expression  { $$ = new operator_node($1, "+", $3, false); }
+                        |   expression '-'          expression  { $$ = new operator_node($1, "-", $3, false); }
+                        |   expression '*'          expression  { $$ = new operator_node($1, "*", $3, false); }
+                        |   expression '/'          expression  { $$ = new operator_node($1, "/", $3, false); }
+                        |   expression '%'          expression  { $$ = new operator_node($1, "%", $3, false); }
                         |   '(' expression ')'                  { $$ = $2; }
-                        |   '-' expression                      { $$ = new unary_minus_node($2); }
-                        |   VARIABLE { $$ = new variable_node($1); }
+                        |   '-' expression                      { $$ = new unary_minus_node($2, false); }
+                        |   VARIABLE { $$ = new variable_node($1, false); }
                         /* |   VARIABLE '[' expression ']' {free($1);}
                         |   VARIABLE '[' expression ']' '[' expression ']' {free($1);} */
                         |   value { $$ = $1; }
@@ -188,7 +188,7 @@ expression:                 expression LOGOR        expression  { $$ = new opera
                         |   function_call
                         |   assignment_statement ; */
 
-assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl; $$ = new assignment_statement_node($1, $3); } ;
+assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl; $$ = new assignment_statement_node($1, $3, true); } ;
 
 /* parameter_list:             data_type VARIABLE ','                  parameter_list  {free($2);}
                         |   data_type VARIABLE                                      {free($2);}
@@ -216,8 +216,10 @@ assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number 
 int main(int, char**) {
     // Initialize the data groups
     data_groups[""]             =   make_pair(0, 0);
-    data_groups["TYPE_INT"]     =   make_pair(1, 0);
-    data_groups["TYPE_FLOAT"]   =   make_pair(1, 1);
+    data_groups["TYPE_BOOL"]    =   make_pair(1, 0);
+    data_groups["TYPE_CHAR"]    =   make_pair(1, 1);
+    data_groups["TYPE_INT"]     =   make_pair(1, 2);
+    data_groups["TYPE_FLOAT"]   =   make_pair(1, 3);
     // Open a file handle to a particular file:
     /* FILE *myfile = fopen("a.cplusp.file", "r"); */
     // Make sure it is valid:

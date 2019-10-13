@@ -2,5 +2,6 @@
 *.tab.*
 lex.yy.*
 cplusp
+*.analysis
 check_all.sh
 
