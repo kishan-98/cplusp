@@ -1,6 +1,6 @@
 #include "cplusp.h"
 
-map<string, int> id_table;
+map<string, dtype> id_table;
 
 operator_node::operator_node(expression_node *left, string op, expression_node *right){
 	leftNode 		=	left;
@@ -11,29 +11,12 @@ void operator_node::print(){
 	cout << "<# "; leftNode->print(); cout << " " << operatorNode << " "; rightNode->print(); cout << " #>";
 	return;
 }
-int operator_node::evaluate(){
-	int leftValueInteger 	=	leftNode->evaluate();
-	int	rightValueInteger 	=	rightNode->evaluate();
-	if(operatorNode == "+")valueInteger = (leftValueInteger + rightValueInteger);
-	if(operatorNode == "-")valueInteger = (leftValueInteger - rightValueInteger);
-	if(operatorNode == "*")valueInteger = (leftValueInteger * rightValueInteger);
-	if(operatorNode == "/")valueInteger = (leftValueInteger / rightValueInteger);
-	if(operatorNode == "%")valueInteger = (leftValueInteger % rightValueInteger);
-	if(operatorNode == "||")valueInteger = (leftValueInteger || rightValueInteger);
-	if(operatorNode == "&&")valueInteger = (leftValueInteger && rightValueInteger);
-	if(operatorNode == "|")valueInteger = (leftValueInteger | rightValueInteger);
-	if(operatorNode == "^")valueInteger = (leftValueInteger ^ rightValueInteger);
-	if(operatorNode == "&")valueInteger = (leftValueInteger & rightValueInteger);
-	if(operatorNode == "==")valueInteger = (leftValueInteger == rightValueInteger);
-	if(operatorNode == "!=")valueInteger = (leftValueInteger != rightValueInteger);
-	if(operatorNode == ">")valueInteger = (leftValueInteger > rightValueInteger);
-	if(operatorNode == ">=")valueInteger = (leftValueInteger >= rightValueInteger);
-	if(operatorNode == "<")valueInteger = (leftValueInteger < rightValueInteger);
-	if(operatorNode == "<=")valueInteger = (leftValueInteger <= rightValueInteger);
-	if(operatorNode == "<<")valueInteger = (leftValueInteger << rightValueInteger);
-	if(operatorNode == ">>")valueInteger = (leftValueInteger >> rightValueInteger);
-	cout << "\t<$ operator_node: " << leftValueInteger << " " << operatorNode << " " << rightValueInteger << " = " << valueInteger << " $>" << endl;
-	return valueInteger;
+dtype operator_node::evaluate(){
+	dtype	leftDataNode 	=	leftNode->evaluate();
+	dtype	rightDataNode 	=	rightNode->evaluate();
+	dataNode = leftDataNode.operate(operatorNode, rightDataNode);
+	cout << "\t<$ operator_node: "; leftDataNode.print(); cout << " " << operatorNode << " "; rightDataNode.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
+	return dataNode;
 }
 
 
@@ -43,24 +26,27 @@ void unary_minus_node::print(){
 	cout << "<# - "; expNode->print(); cout << " #>";
 	return;
 }
-int unary_minus_node::evaluate(){
-	int expValueInteger 	=	expNode->evaluate();
-	valueInteger = (-expValueInteger);
-	cout << "\t<$ unary_minus_node: - " << expValueInteger << " = " << valueInteger << " $>" << endl;
-	return valueInteger;
+dtype unary_minus_node::evaluate(){
+	dtype expData 	=	expNode->evaluate();
+	dataNode = expData.negate();
+	cout << "\t<$ unary_minus_node: - "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
+	return dataNode;
 }
 
 
 value_node::value_node(int value){
-	valueInteger = value;
+	dataNode = dtype(value);
+}
+value_node::value_node(float value){
+	dataNode = dtype(value);
 }
 void value_node::print(){
-	cout << valueInteger;
+	dataNode.print();
 	return;
 }
-int value_node::evaluate(){
-	cout << "\t<$ value: " << valueInteger << " $>" << endl;
-	return valueInteger;
+dtype value_node::evaluate(){
+	cout << "\t<$ value: "; dataNode.print(); cout << " $>" << endl;
+	return dataNode;
 }
 
 
@@ -71,8 +57,8 @@ void variable_node::print(){
 	cout << variableID;
 	return;
 }
-int variable_node::evaluate(){
-	cout << "\t<$ variable: " << variableID << " = " << id_table[variableID] << " $>" << endl;
+dtype variable_node::evaluate(){
+	cout << "\t<$ variable: " << variableID << " = "; id_table[variableID].print(); cout << " $>" << endl;
 	return id_table[variableID];
 }
 
@@ -84,7 +70,7 @@ void assignment_statement_node::print(){
 }
 void assignment_statement_node::evaluate(){
 	id_table[variableID] = expressionNode->evaluate();
-	cout << "\t<$ assignment_statement: " << variableID << " = " << id_table[variableID] << " $>" << endl;
+	cout << "\t<$ assignment_statement: " << variableID << " = "; id_table[variableID].print(); cout << " $>" << endl;
 	return;
 }
 
@@ -92,20 +78,20 @@ program_node::program_node(list<statement_node *> *stmt_list): statementList(stm
 }
 void program_node::evaluate(){
 	list<statement_node *>::iterator statementListIterator;
-	cout << "================================================PRINT+EVALUATE==================================================================" << endl;
-	for(statementListIterator = statementList->begin(); statementListIterator != statementList->end(); statementListIterator++){
-		(*statementListIterator)->print();
-		(*statementListIterator)->evaluate();
-	}
+	// cout << "===================================================PRINT========================================================================" << endl;
+	// for(statementListIterator = statementList->begin(); statementListIterator != statementList->end(); statementListIterator++){
+	// 	(*statementListIterator)->print();
+	// 	// (*statementListIterator)->evaluate();
+	// }
 	// cout << "================================================EVALUATE========================================================================" << endl;
 	// for(statementListIterator = statementList->begin(); statementListIterator != statementList->end(); statementListIterator++){
 	// 	// (*statementListIterator)->print();
 	// 	(*statementListIterator)->evaluate();
 	// }
-	// cout << "================================================PRINT===========================================================================" << endl;
-	// for(statementListIterator = statementList->begin(); statementListIterator != statementList->end(); statementListIterator++){
-	// 	(*statementListIterator)->print();
-	// 	// (*statementListIterator)->evaluate();
-	// }
+	cout << "================================================PRINT+EVALUATE==================================================================" << endl;
+	for(statementListIterator = statementList->begin(); statementListIterator != statementList->end(); statementListIterator++){
+		(*statementListIterator)->print();
+		(*statementListIterator)->evaluate();
+	}
 	cout << "================================================================================================================================" << endl;
 }

@@ -2,11 +2,123 @@
 
 using namespace std;
 
+// Store data type group, heirarchy and supported operators
+extern map<string, pair<int, int> > data_groups;
+
+typedef struct MYDATA dtype;
+
+struct MYDATA {
+	string dataType;
+	bool validType;
+	union{
+		int 	valueInteger;
+		float	valueFloat;
+	}dataValue;
+	MYDATA(){
+		validType = false;
+	}
+	MYDATA(int value){
+		validType				=	true;
+		dataType				=	"TYPE_INT";
+		dataValue.valueInteger	=	value;
+	}
+	MYDATA(float value){
+		validType				=	true;
+		dataType				=	"TYPE_FLOAT";
+		dataValue.valueFloat	=	value;
+	}
+	void my_typecast(string toDataType){
+		if(dataType == "TYPE_INT"){
+			if(toDataType == "TYPE_INT"){
+				dataType = "TYPE_INT", dataValue.valueInteger = (int)dataValue.valueInteger;
+			}
+			else if(toDataType == "TYPE_FLOAT"){
+				dataType = "TYPE_FLOAT", dataValue.valueFloat = (float)dataValue.valueInteger;
+			}
+		}
+		else if(dataType == "TYPE_FLOAT"){
+			if(toDataType == "TYPE_INT"){
+				dataType = "TYPE_INT", dataValue.valueInteger = (int)dataValue.valueFloat;
+			}
+			else if(toDataType == "TYPE_FLOAT"){
+				dataType = "TYPE_FLOAT", dataValue.valueFloat = (float)dataValue.valueFloat;
+			}
+		}
+	    return;
+	}
+	void print(){
+	    if(dataType == "TYPE_INT")cout << dataValue.valueInteger;
+	    else if(dataType == "TYPE_FLOAT")cout << dataValue.valueFloat;
+		cout << "<" << dataType << ">";
+	    return;
+	}
+	struct MYDATA operate(string op, struct MYDATA s2){
+		if(data_groups[dataType].first != data_groups[s2.dataType].first){
+		    return MYDATA();
+		}
+		else{
+		    if(data_groups[dataType].second > data_groups[s2.dataType].second){
+		        s2.my_typecast(dataType);
+		    }
+		    else if(data_groups[dataType].second < data_groups[s2.dataType].second){
+		        my_typecast(s2.dataType);
+		    }
+			if(dataType == "TYPE_INT"){
+					 if(op == "+") 	return MYDATA(dataValue.valueInteger + s2.dataValue.valueInteger);
+				else if(op == "-") 	return MYDATA(dataValue.valueInteger - s2.dataValue.valueInteger);
+				else if(op == "*") 	return MYDATA(dataValue.valueInteger * s2.dataValue.valueInteger);
+				else if(op == "/") 	return MYDATA(dataValue.valueInteger / s2.dataValue.valueInteger);
+				else if(op == "%") 	return MYDATA(dataValue.valueInteger % s2.dataValue.valueInteger);
+				else if(op == "||")	return MYDATA(dataValue.valueInteger || s2.dataValue.valueInteger);
+				else if(op == "&&") return MYDATA(dataValue.valueInteger && s2.dataValue.valueInteger);
+				else if(op == "==") return MYDATA(dataValue.valueInteger == s2.dataValue.valueInteger);
+				else if(op == "!=") return MYDATA(dataValue.valueInteger != s2.dataValue.valueInteger);
+				else if(op == ">") 	return MYDATA(dataValue.valueInteger > s2.dataValue.valueInteger);
+				else if(op == ">=") return MYDATA(dataValue.valueInteger >= s2.dataValue.valueInteger);
+				else if(op == "<") 	return MYDATA(dataValue.valueInteger < s2.dataValue.valueInteger);
+				else if(op == "<=") return MYDATA(dataValue.valueInteger <= s2.dataValue.valueInteger);
+				else if(op == "|") 	return MYDATA(dataValue.valueInteger | s2.dataValue.valueInteger);
+				else if(op == "^") 	return MYDATA(dataValue.valueInteger ^ s2.dataValue.valueInteger);
+				else if(op == "&") 	return MYDATA(dataValue.valueInteger & s2.dataValue.valueInteger);
+				else if(op == "<<") return MYDATA(dataValue.valueInteger << s2.dataValue.valueInteger);
+				else if(op == ">>") return MYDATA(dataValue.valueInteger >> s2.dataValue.valueInteger);
+				else return MYDATA();
+			}
+			else if(dataType == "TYPE_FLOAT"){
+					 if(op == "+")	return MYDATA(dataValue.valueFloat + s2.dataValue.valueFloat);
+			   	else if(op == "-")	return MYDATA(dataValue.valueFloat - s2.dataValue.valueFloat);
+			   	else if(op == "*")	return MYDATA(dataValue.valueFloat * s2.dataValue.valueFloat);
+			   	else if(op == "/")	return MYDATA(dataValue.valueFloat / s2.dataValue.valueFloat);
+			   	else if(op == "%")	return MYDATA(fmod(dataValue.valueFloat, s2.dataValue.valueFloat));
+			   	else if(op == "||")	return MYDATA(dataValue.valueFloat || s2.dataValue.valueFloat);
+			   	else if(op == "&&")	return MYDATA(dataValue.valueFloat && s2.dataValue.valueFloat);
+			   	else if(op == "==")	return MYDATA(dataValue.valueFloat == s2.dataValue.valueFloat);
+			   	else if(op == "!=")	return MYDATA(dataValue.valueFloat != s2.dataValue.valueFloat);
+			   	else if(op == ">")	return MYDATA(dataValue.valueFloat > s2.dataValue.valueFloat);
+			   	else if(op == ">=")	return MYDATA(dataValue.valueFloat >= s2.dataValue.valueFloat);
+			   	else if(op == "<")	return MYDATA(dataValue.valueFloat < s2.dataValue.valueFloat);
+			   	else if(op == "<=")	return MYDATA(dataValue.valueFloat <= s2.dataValue.valueFloat);
+				else return MYDATA();
+			}
+			return MYDATA();
+		}
+	}
+	struct MYDATA negate(){
+		if(dataType == "TYPE_INT"){
+			return MYDATA(-dataValue.valueInteger);
+		}
+		else if(dataType == "TYPE_FLOAT"){
+			return MYDATA(-dataValue.valueFloat);
+		}
+		return MYDATA();
+	}
+};
+
 class expression_node{
 public:
-	int valueInteger;
+	dtype dataNode;
 	virtual void print() = 0;
-	virtual int evaluate() = 0;
+	virtual dtype evaluate() = 0;
 };
 
 class unary_minus_node : public expression_node {
@@ -15,7 +127,7 @@ protected:
 public:
 	unary_minus_node(expression_node *exp_node);
 	void print();
-	int evaluate();
+	dtype evaluate();
 };
 
 class operator_node : public expression_node {
@@ -26,14 +138,15 @@ protected:
 public:
 	operator_node(expression_node *left, string op, expression_node *right);
 	void print();
-	int evaluate();
+	dtype evaluate();
 };
 
 class value_node : public expression_node {
 public:
 	value_node(int value);
+	value_node(float value);
 	void print();
-	int evaluate();
+	dtype evaluate();
 };
 
 class variable_node : public expression_node {
@@ -42,7 +155,7 @@ protected:
 public:
 	variable_node(string id);
 	void print();
-	int evaluate();
+	dtype evaluate();
 };
 
 class statement_node{
@@ -70,4 +183,4 @@ public:
 };
 
 extern program_node *root;
-extern map<string, int> id_table;
+extern map<string, dtype> id_table;

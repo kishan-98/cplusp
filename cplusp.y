@@ -9,6 +9,7 @@
   extern int line_number;
   program_node *root;
   void yyerror(const char *s);
+  map<string, pair<int, int> > data_groups;
 %}
 
 // Bison fundamentally works by asking flex to get the next token, which it
@@ -33,6 +34,7 @@
   statement_node *stmt;
   expression_node *exp_node;
   assignment_statement_node *assign_node;
+  value_node *val_node;
 }
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
@@ -94,7 +96,7 @@
 %type <stmt> statement
 %type <exp_node> expression
 %type <assign_node> assignment_statement
-%type <ival> value
+%type <val_node> value
 
 %%
 // This is the actual grammar that bison will parse, but for right now it's just
@@ -122,9 +124,9 @@ statement:                  assignment_statement TERMINATOR { $$ = $1; } ;
                         |   TYPE_BOOL {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);}
                         |   TYPE_FILE {cout << line_number << ": " << $1 << " Data Type Declaration" << endl; free($1);} ; */
 
-value:                      INT ;
-                        /* |   FLOAT
-                        |   CHAR
+value:                      INT { $$ = new value_node($1); }
+                        |   FLOAT { $$ = new value_node($1); } ;
+                        /* |   CHAR
                         |   BOOL ; */
 
 /* declaration_statement:      data_type variable_list TERMINATOR; */
@@ -181,7 +183,7 @@ expression:                 expression LOGOR        expression  { $$ = new opera
                         |   VARIABLE { $$ = new variable_node($1); }
                         /* |   VARIABLE '[' expression ']' {free($1);}
                         |   VARIABLE '[' expression ']' '[' expression ']' {free($1);} */
-                        |   value { $$ = new value_node($1); }
+                        |   value { $$ = $1; }
                         /* |   STRING {free($1);}
                         |   function_call
                         |   assignment_statement ; */
@@ -212,19 +214,23 @@ assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number 
 %%
 
 int main(int, char**) {
-  // Open a file handle to a particular file:
-  /* FILE *myfile = fopen("a.cplusp.file", "r"); */
-  // Make sure it is valid:
-  /* if (!myfile) {
-    cout << "I can't open a.cplusp.file!" << endl;
+    // Initialize the data groups
+    data_groups[""]             =   make_pair(0, 0);
+    data_groups["TYPE_INT"]     =   make_pair(1, 0);
+    data_groups["TYPE_FLOAT"]   =   make_pair(1, 1);
+    // Open a file handle to a particular file:
+    /* FILE *myfile = fopen("a.cplusp.file", "r"); */
+    // Make sure it is valid:
+    /* if (!myfile) {
+        cout << "I can't open a.cplusp.file!" << endl;
     return -1;
-  } */
-  // Set Flex to read from it instead of defaulting to STDIN:
-  /* yyin = myfile; */
+    } */
+    // Set Flex to read from it instead of defaulting to STDIN:
+    /* yyin = myfile; */
 
-  // Parse through the input:
-  yyparse();
-  root->evaluate();
+    // Parse through the input:
+    yyparse();
+    root->evaluate();
   return 0;
 
 }
