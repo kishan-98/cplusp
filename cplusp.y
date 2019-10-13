@@ -158,24 +158,24 @@ value:                      INT ;
 
 /* operator:                   ASSIGNMENT | LOGOR | LOGAND | '|' | '^' | '&' | EQ | NE | GT | GE | LT | LE | LSHIFT | RSHIFT | '+' | '-' | '*' | '/' | '%'; */
 
-expression:                 expression LOGOR        expression  { $$ = new logor_node($1, $3); }
-                        |   expression LOGAND       expression  { $$ = new logand_node($1, $3); }
-                        |   expression '|'          expression  { $$ = new or_node($1, $3); }
-                        |   expression '^'          expression  { $$ = new xor_node($1, $3); }
-                        |   expression '&'          expression  { $$ = new and_node($1, $3); }
-                        |   expression EQ           expression  { $$ = new eq_node($1, $3); }
-                        |   expression NE           expression  { $$ = new ne_node($1, $3); }
-                        |   expression GT           expression  { $$ = new gt_node($1, $3); }
-                        |   expression GE           expression  { $$ = new ge_node($1, $3); }
-                        |   expression LT           expression  { $$ = new lt_node($1, $3); }
-                        |   expression LE           expression  { $$ = new le_node($1, $3); }
-                        |   expression LSHIFT       expression  { $$ = new lshift_node($1, $3); }
-                        |   expression RSHIFT       expression  { $$ = new rshift_node($1, $3); }
-                        |   expression '+'          expression  { $$ = new plus_node($1, $3); }
-                        |   expression '-'          expression  { $$ = new minus_node($1, $3); }
-                        |   expression '*'          expression  { $$ = new multiply_node($1, $3); }
-                        |   expression '/'          expression  { $$ = new divide_node($1, $3); }
-                        |   expression '%'          expression  { $$ = new modulo_node($1, $3); }
+expression:                 expression LOGOR        expression  { $$ = new operator_node($1, "||", $3); }
+                        |   expression LOGAND       expression  { $$ = new operator_node($1, "&&", $3); }
+                        |   expression '|'          expression  { $$ = new operator_node($1, "|", $3); }
+                        |   expression '^'          expression  { $$ = new operator_node($1, "^", $3); }
+                        |   expression '&'          expression  { $$ = new operator_node($1, "&", $3); }
+                        |   expression EQ           expression  { $$ = new operator_node($1, "==", $3); }
+                        |   expression NE           expression  { $$ = new operator_node($1, "!=", $3); }
+                        |   expression GT           expression  { $$ = new operator_node($1, ">", $3); }
+                        |   expression GE           expression  { $$ = new operator_node($1, ">=", $3); }
+                        |   expression LT           expression  { $$ = new operator_node($1, "<", $3); }
+                        |   expression LE           expression  { $$ = new operator_node($1, "<=", $3); }
+                        |   expression LSHIFT       expression  { $$ = new operator_node($1, "<<", $3); }
+                        |   expression RSHIFT       expression  { $$ = new operator_node($1, ">>", $3); }
+                        |   expression '+'          expression  { $$ = new operator_node($1, "+", $3); }
+                        |   expression '-'          expression  { $$ = new operator_node($1, "-", $3); }
+                        |   expression '*'          expression  { $$ = new operator_node($1, "*", $3); }
+                        |   expression '/'          expression  { $$ = new operator_node($1, "/", $3); }
+                        |   expression '%'          expression  { $$ = new operator_node($1, "%", $3); }
                         |   '(' expression ')'                  { $$ = $2; }
                         |   '-' expression                      { $$ = new unary_minus_node($2); }
                         |   VARIABLE { $$ = new variable_node($1); }
