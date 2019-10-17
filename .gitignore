@@ -3,6 +3,7 @@
 lex.yy.*
 cplusp
 *.vcg
+*.dot
 *.analysis
 check_all.sh
 
