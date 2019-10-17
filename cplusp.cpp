@@ -1,15 +1,18 @@
 #include "cplusp.h"
 
-map<string, dtype> id_table;
+map<string, dtype> value_table;
+map<string, bool> id_table;
 
-operator_node::operator_node(expression_node *left, string op, expression_node *right, bool print){
-	printStatement 	= print;
+operator_node::operator_node(expression_node *left, string op, expression_node *right, bool print, char term){
+	terminatorChar	=	term;
+	printStatement 	= 	print;
 	leftNode 		=	left;
 	operatorNode	=	op;
 	rightNode 		=	right;
 }
 void operator_node::print(){
-	cout << "<# "; leftNode->print(); cout << " " << operatorNode << " "; rightNode->print(); cout << " #>";
+	cout << "<# "; leftNode->print(); cout << operatorNode << " "; rightNode->print(); cout << "#>";
+	if(terminatorChar){cout << terminatorChar;}
 	return;
 }
 dtype operator_node::evaluate(){
@@ -23,10 +26,11 @@ dtype operator_node::evaluate(){
 }
 
 
-unary_minus_node::unary_minus_node(expression_node *exp_node, bool print) : printStatement(print), expNode(exp_node) {
+unary_minus_node::unary_minus_node(expression_node *exp_node, bool print, char term) : terminatorChar(term), printStatement(print), expNode(exp_node) {
 }
 void unary_minus_node::print(){
-	cout << "<# - "; expNode->print(); cout << " #>";
+	cout << "<# - "; expNode->print(); cout << "#>";
+	if(terminatorChar){cout << terminatorChar;}
 	return;
 }
 dtype unary_minus_node::evaluate(){
@@ -39,16 +43,29 @@ dtype unary_minus_node::evaluate(){
 }
 
 
-value_node::value_node(int value, bool print){
-	printStatement = print;
-	dataNode = dtype(value);
+value_node::value_node(bool value, bool print, char term){
+	terminatorChar	=	term;
+	printStatement 	= 	print;
+	dataNode 		=	dtype(value);
 }
-value_node::value_node(float value, bool print){
-	printStatement = print;
-	dataNode = dtype(value);
+value_node::value_node(char value, bool print, char term){
+	terminatorChar	=	term;
+	printStatement 	= 	print;
+	dataNode 		=	dtype(value);
+}
+value_node::value_node(int value, bool print, char term){
+	terminatorChar	=	term;
+	printStatement 	= 	print;
+	dataNode 		=	dtype(value);
+}
+value_node::value_node(float value, bool print, char term){
+	terminatorChar	=	term;
+	printStatement 	= 	print;
+	dataNode 		=	dtype(value);
 }
 void value_node::print(){
 	dataNode.print();
+	if(terminatorChar){cout << terminatorChar;}
 	return;
 }
 dtype value_node::evaluate(){
@@ -59,36 +76,93 @@ dtype value_node::evaluate(){
 }
 
 
-variable_node::variable_node(string id, bool print){
+variable_node::variable_node(string id, bool print, char term){
+	terminatorChar	=	term;
 	printStatement = print;
 	variableID = id;
 }
 void variable_node::print(){
 	cout << variableID;
+	if(terminatorChar){cout << terminatorChar;}
 	return;
 }
 dtype variable_node::evaluate(){
 	if(printStatement){
-		cout << "\t<$ variable: " << variableID << " = "; id_table[variableID].print(); cout << " $>" << endl;
+		cout << "\t<$ variable: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
-	return id_table[variableID];
+	return value_table[variableID];
 }
 
 
-assignment_statement_node::assignment_statement_node(string id, expression_node *expr_node, bool print) : printStatement(print), variableID(id), expressionNode(expr_node) {
+expression_statement_node::expression_statement_node(expression_node *expr_node, bool print, char term) : terminatorChar(term), printStatement(print), expressionNode(expr_node) {
 }
-void assignment_statement_node::print(){
-	cout << "<# " << variableID << " = "; expressionNode->print(); cout << " #>" << endl;
+void expression_statement_node::print(){
+	cout << "<# "; expressionNode->print(); cout << "#>";
+	if(terminatorChar){cout << terminatorChar;}
+	return;
 }
-void assignment_statement_node::evaluate(){
-	id_table[variableID] = expressionNode->evaluate();
+void expression_statement_node::evaluate(){
 	if(printStatement){
-		cout << "\t<$ assignment_statement: " << variableID << " = "; id_table[variableID].print(); cout << " $>" << endl;
+		cout << "\t<$ expression_statement_node: "; expressionNode->print(); cout << " $>" << endl;
 	}
 	return;
 }
 
-program_node::program_node(list<statement_node *> *stmt_list, bool print): printStatement(print), statementList(stmt_list) {
+
+tertiary_statement_node::tertiary_statement_node(expression_node *expr_node, statement_node *true_statement, statement_node *false_statement, bool print, char term) : terminatorChar(term), printStatement(print), expressionNode(expr_node), trueExpressionStatement(true_statement), falseExpressionStatement(false_statement) {
+}
+void tertiary_statement_node::print(){
+	cout << "<# "; expressionNode->print(); cout << "? "; trueExpressionStatement->print(); cout << ": "; falseExpressionStatement->print(); cout << "#>";
+	if(terminatorChar){cout << terminatorChar;}
+	return;
+}
+void tertiary_statement_node::evaluate(){
+	dataNode = expressionNode->evaluate();
+	if(dataNode.evaluate()){
+		trueExpressionStatement->evaluate();
+	}
+	else{
+		falseExpressionStatement->evaluate();
+	}
+	if(printStatement){
+		cout << "\t<$ tertiary_statement_node: "; (dataNode.evaluate() ? trueExpressionStatement->print() : falseExpressionStatement->print()); cout << " $>" << endl;
+	}
+	return;
+}
+
+
+declaration_statement_node::declaration_statement_node(string data_type, string id, expression_node *expr_node, bool print, char term) : terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), expressionNode(expr_node) {
+}
+void declaration_statement_node::print(){
+	cout << "<# " << variableID << " = "; expressionNode->print(); cout << "#>";
+	if(terminatorChar){cout << terminatorChar;}
+	return;
+}
+void declaration_statement_node::evaluate(){
+	// value_table[variableID] = expressionNode->evaluate();
+	if(printStatement){
+		cout << "\t<$ declaration_statement_node: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
+	}
+	return;
+}
+
+
+assignment_statement_node::assignment_statement_node(string id, expression_node *expr_node, bool print, char term) : terminatorChar(term), printStatement(print), variableID(id), expressionNode(expr_node) {
+}
+void assignment_statement_node::print(){
+	cout << "<# " << variableID << " = "; expressionNode->print(); cout << "#>";
+	if(terminatorChar){cout << terminatorChar;}
+	return;
+}
+void assignment_statement_node::evaluate(){
+	value_table[variableID] = expressionNode->evaluate();
+	if(printStatement){
+		cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
+	}
+	return;
+}
+
+program_node::program_node(list<statement_node *> *stmt_list, bool print, char term): terminatorChar(term), printStatement(print), statementList(stmt_list) {
 }
 void program_node::evaluate(){
 	if(printStatement){
@@ -110,4 +184,5 @@ void program_node::evaluate(){
 		}
 		cout << "================================================================================================================================" << endl;
 	}
+	return;
 }

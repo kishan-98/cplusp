@@ -7,7 +7,7 @@ cplusp.o: cplusp.cpp cplusp.h
 	g++ -c cplusp.cpp
 
 cplusp.tab.o: cplusp.y
-	bison -dv cplusp.y
+	bison -dvg cplusp.y
 	g++ -c cplusp.tab.c
 
 lex.yy.o: cplusp.l cplusp.tab.o
