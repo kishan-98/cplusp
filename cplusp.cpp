@@ -22,6 +22,7 @@ dtype operator_node::evaluate(){
 	dtype	rightDataNode 	=	rightNode->evaluate();
 	dataNode = leftDataNode.operate(operatorNode, rightDataNode);
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ operator_node: "; leftDataNode.print(); cout << " " << operatorNode << " "; rightDataNode.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
 	}
 	return dataNode;
@@ -34,6 +35,7 @@ void operator_node::print_evaluate(){
 	dtype	rightDataNode 	=	rightNode->evaluate();
 	dataNode = leftDataNode.operate(operatorNode, rightDataNode);
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ operator_node: "; leftDataNode.print(); cout << " " << operatorNode << " "; rightDataNode.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
 	}
 	return;
@@ -52,6 +54,7 @@ dtype unary_minus_node::evaluate(){
 	dtype expData 	=	expNode->evaluate();
 	dataNode = expData.negate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ unary_minus_node: - "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
 	}
 	return dataNode;
@@ -63,6 +66,7 @@ void unary_minus_node::print_evaluate(){
 	dtype expData 	=	expNode->evaluate();
 	dataNode = expData.negate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ unary_minus_node: - "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
 	}
 	return;
@@ -101,6 +105,7 @@ void value_node::print(){
 }
 dtype value_node::evaluate(){
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ value: "; dataNode.print(); cout << " $>" << endl;
 	}
 	return dataNode;
@@ -110,6 +115,7 @@ void value_node::print_evaluate(){
 	dataNode.print();
 	cout << terminatorChar;
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ value: "; dataNode.print(); cout << " $>" << endl;
 	}
 	return;
@@ -130,6 +136,7 @@ void variable_node::print(){
 }
 dtype variable_node::evaluate(){
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ variable: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
 	return value_table[variableID];
@@ -139,6 +146,7 @@ void variable_node::print_evaluate(){
 	cout << variableID;
 	cout << terminatorChar;
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ variable: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
 	return;
@@ -154,7 +162,7 @@ void statement_list_node::insert_statement(statement_node *stmt_node){
 void statement_list_node::print(){
 	list<statement_node *>::iterator stmtIt;
 	for(stmtIt = statementList->begin(); stmtIt != statementList->end(); stmtIt++){
-		cout << initiatorChar;
+		(*stmtIt)->setInitiatorChar(initiatorChar);
 		(*stmtIt)->print();
 	}
 	cout << terminatorChar;
@@ -165,6 +173,7 @@ void statement_list_node::evaluate(){
 	for(stmtIt = statementList->begin(); stmtIt != statementList->end(); stmtIt++){
 		(*stmtIt)->evaluate();
 		if(printStatement){
+			cout << initiatorChar;
 			cout << "\t<$ statement_list_node: "; (*stmtIt)->print(); cout << " $>" << endl;
 		}
 	}
@@ -173,10 +182,11 @@ void statement_list_node::evaluate(){
 void statement_list_node::print_evaluate(){
 	list<statement_node *>::iterator stmtIt;
 	for(stmtIt = statementList->begin(); stmtIt != statementList->end(); stmtIt++){
-		cout << initiatorChar;
+		(*stmtIt)->setInitiatorChar(initiatorChar);
 		(*stmtIt)->print();
 		(*stmtIt)->evaluate();
 		if(printStatement){
+			cout << initiatorChar;
 			cout << "\t<$ statement_list_node: "; (*stmtIt)->print(); cout << " $>" << endl;
 		}
 	}
@@ -196,6 +206,7 @@ void expression_statement_node::print(){
 void expression_statement_node::evaluate(){
 	expressionNode->evaluate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ expression_statement_node: "; expressionNode->print(); cout << " $>" << endl;
 	}
 	return;
@@ -206,6 +217,7 @@ void expression_statement_node::print_evaluate(){
 	cout << terminatorChar;
 	expressionNode->evaluate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ expression_statement_node: "; expressionNode->print(); cout << " $>" << endl;
 	}
 	return;
@@ -232,6 +244,7 @@ void expression_list_node::evaluate(){
 	for(stmtIt = expressionList->begin(); stmtIt != expressionList->end(); stmtIt++){
 		(*stmtIt)->evaluate();
 		if(printStatement){
+			cout << initiatorChar;
 			cout << "\t<$ expression_list_node: "; (*stmtIt)->print(); cout << " $>" << endl;
 		}
 	}
@@ -244,6 +257,7 @@ void expression_list_node::print_evaluate(){
 		cout << "<# "; (*exprIt)->print(); cout << " #>";
 		(*exprIt)->evaluate();
 		if(printStatement){
+			cout << initiatorChar;
 			cout << "\t<$ expression_list_node: "; (*exprIt)->print(); cout << " $>" << endl;
 		}
 	}
@@ -269,6 +283,7 @@ void tertiary_statement_node::evaluate(){
 		falseExpressionStatement->evaluate();
 	}
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ tertiary_statement_node: "; (dataNode.evaluate() ? trueExpressionStatement->print() : falseExpressionStatement->print()); cout << " $>" << endl;
 	}
 	return;
@@ -285,6 +300,7 @@ void tertiary_statement_node::print_evaluate(){
 		falseExpressionStatement->evaluate();
 	}
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ tertiary_statement_node: "; (dataNode.evaluate() ? trueExpressionStatement->print() : falseExpressionStatement->print()); cout << " $>" << endl;
 	}
 	return;
@@ -303,15 +319,17 @@ void if_statement_node::print(){
 	list<string>::iterator strIt;
 	list<expression_node *>::iterator expIt;
 	list<statement_list_node *>::iterator stmtIt;
+	string nextInitiatorChar = initiatorChar + "\t";
+	cout << endl;
 	for(strIt = condType->begin(), expIt = expressionList->begin(), stmtIt = statementList->begin(); strIt != condType->end() && expIt != expressionList->end() && stmtIt != statementList->end(); strIt++, expIt++, stmtIt++){
 		cout << initiatorChar;
 		cout << "<# " << (*strIt) << " "; (*expIt)->print(); cout << " THEN " << endl;
-		(*stmtIt)->setInitiatorChar("\t\t");
+		(*stmtIt)->setInitiatorChar(nextInitiatorChar);
 		(*stmtIt)->print();
-		(*stmtIt)->setInitiatorChar("");
-		cout << "   " << (*strIt) << " #>" << endl;
+		cout << initiatorChar;
+		cout << "   " << (*strIt) << " #>";
 	}
-	cout << terminatorChar;
+	cout << terminatorChar << endl;
 	return;
 }
 void if_statement_node::evaluate(){
@@ -323,6 +341,7 @@ void if_statement_node::evaluate(){
 		if(dataNode.evaluate()){
 			(*stmtIt)->evaluate();
 			if(printStatement){
+				cout << initiatorChar;
 				cout << "\t<$ if_statement_node: "; (*stmtIt)->print(); cout << " $>" << endl;
 			}
 			break;
@@ -336,25 +355,28 @@ void if_statement_node::print_evaluate(){
 	list<statement_list_node *>::iterator stmtIt;
 	dtype dataNode;
 	bool flag = true;
+	string nextInitiatorChar = initiatorChar + "\t";
+	cout << endl;
 	for(strIt = condType->begin(), expIt = expressionList->begin(), stmtIt = statementList->begin(); strIt != condType->end() && expIt != expressionList->end() && stmtIt != statementList->end(); strIt++, expIt++, stmtIt++){
 		cout << initiatorChar;
 		cout << "<# " << (*strIt) << " "; (*expIt)->print(); cout << " THEN " << endl;
-		(*stmtIt)->setInitiatorChar("\t\t");
+		(*stmtIt)->setInitiatorChar(nextInitiatorChar);
 		(*stmtIt)->print();
-		(*stmtIt)->setInitiatorChar("");
-		cout << "   " << (*strIt) << " #>" << endl;
+		cout << initiatorChar;
+		cout << "   " << (*strIt) << " #>";
 		if(flag){
 			dataNode = (*expIt)->evaluate();
 			if(dataNode.evaluate()){
 				(*stmtIt)->evaluate();
 				if(printStatement){
+					cout << initiatorChar;
 					cout << "\t<$ if_statement_node: "; (*stmtIt)->print(); cout << " $>" << endl;
 				}
 				flag = false;
 			}
 		}
 	}
-	cout << terminatorChar;
+	cout << terminatorChar << endl;
 	return;
 }
 
@@ -362,13 +384,15 @@ void if_statement_node::print_evaluate(){
 while_statement_node::while_statement_node(expression_node *expr_node, statement_list_node *statement_list, bool print, string term, string init) : initiatorChar(init), terminatorChar(term), printStatement(print), expressionNode(expr_node), statementList(statement_list){
 }
 void while_statement_node::print(){
+	string nextInitiatorChar = initiatorChar + "\t";
+	cout << endl;
 	cout << initiatorChar;
 	cout << "<# WHILE "; expressionNode->print(); cout << " DO" << endl;
-	statementList->setInitiatorChar("\t\t");
+	statementList->setInitiatorChar(nextInitiatorChar);
 	statementList->print();
-	statementList->setInitiatorChar("");
-	cout << "   WHILE #>" << endl;
-	cout << terminatorChar;
+	cout << initiatorChar;
+	cout << "   WHILE #>";
+	cout << terminatorChar << endl;
 	return;
 }
 void while_statement_node::evaluate(){
@@ -376,26 +400,84 @@ void while_statement_node::evaluate(){
 	while(dataNode.evaluate()){
 		statementList->evaluate();
 		if(printStatement){
+			cout << initiatorChar;
 			cout << "\t<$ while_statement_node: "; statementList->print(); cout << " $>" << endl;
 		}
+		dataNode = expressionNode->evaluate();
 	}
 	return;
 }
 void while_statement_node::print_evaluate(){
+	string nextInitiatorChar = initiatorChar + "\t";
+	cout << endl;
 	cout << initiatorChar;
 	cout << "<# WHILE "; expressionNode->print(); cout << " DO" << endl;
-	statementList->setInitiatorChar("\t\t");
+	statementList->setInitiatorChar(nextInitiatorChar);
 	statementList->print();
-	statementList->setInitiatorChar("");
-	cout << "   WHILE #>" << endl;
-	cout << terminatorChar;
+	cout << initiatorChar;
+	cout << "   WHILE #>";
 	dtype dataNode = expressionNode->evaluate();
 	while(dataNode.evaluate()){
 		statementList->evaluate();
 		if(printStatement){
+			cout << initiatorChar;
 			cout << "\t<$ while_statement_node: "; statementList->print(); cout << " $>" << endl;
 		}
 	}
+	cout << terminatorChar << endl;
+	return;
+}
+
+
+for_statement_node::for_statement_node(statement_node *init_node, expression_node *term_node, statement_node *modf_node, statement_list_node *statement_list, bool print, string term, string init) : initiatorChar(init), terminatorChar(term), printStatement(print), initNode(init_node), termNode(term_node), modfNode(modf_node), statementList(statement_list){
+}
+void for_statement_node::print(){
+	string nextInitiatorChar = initiatorChar + "\t";
+	cout << endl;
+	cout << initiatorChar;
+	cout << "<# FOR "; initNode->print(); cout << " UNLESS "; termNode->print(); cout << " UPDATE BY "; modfNode->print(); cout << " DO" << endl;
+	statementList->setInitiatorChar(nextInitiatorChar);
+	statementList->print();
+	cout << initiatorChar;
+	cout << "   FOR #>";
+	cout << terminatorChar << endl;
+	return;
+}
+void for_statement_node::evaluate(){
+	initNode->evaluate();
+	dtype condNode = termNode->evaluate();
+	while(condNode.evaluate()){
+		statementList->evaluate();
+		if(printStatement){
+			cout << initiatorChar;
+			cout << "\t<$ for_statement_node: "; statementList->print(); cout << " $>" << endl;
+		}
+		modfNode->evaluate();
+		condNode = termNode->evaluate();
+	}
+	return;
+}
+void for_statement_node::print_evaluate(){
+	string nextInitiatorChar = initiatorChar + "\t";
+	cout << endl;
+	cout << initiatorChar;
+	cout << "<# FOR "; initNode->print(); cout << " UNLESS "; termNode->print(); cout << " UPDATE BY "; modfNode->print(); cout << " DO" << endl;
+	statementList->setInitiatorChar(nextInitiatorChar);
+	statementList->print();
+	cout << initiatorChar;
+	cout << "   FOR #>";
+	initNode->evaluate();
+	dtype condNode = termNode->evaluate();
+	while(condNode.evaluate()){
+		statementList->evaluate();
+		if(printStatement){
+			cout << initiatorChar;
+			cout << "\t<$ for_statement_node: "; statementList->print(); cout << " $>" << endl;
+		}
+		modfNode->evaluate();
+		condNode = termNode->evaluate();
+	}
+	cout << terminatorChar << endl;
 	return;
 }
 
@@ -411,6 +493,7 @@ void declaration_statement_node::print(){
 void declaration_statement_node::evaluate(){
 	// value_table[variableID] = expressionNode->evaluate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ declaration_statement_node: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
 	return;
@@ -421,6 +504,7 @@ void declaration_statement_node::print_evaluate(){
 	cout << terminatorChar;
 	// value_table[variableID] = expressionNode->evaluate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ declaration_statement_node: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
 	return;
@@ -438,6 +522,7 @@ void assignment_statement_node::print(){
 void assignment_statement_node::evaluate(){
 	value_table[variableID] = expressionNode->evaluate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
 	return;
@@ -448,6 +533,7 @@ void assignment_statement_node::print_evaluate(){
 	cout << terminatorChar;
 	value_table[variableID] = expressionNode->evaluate();
 	if(printStatement){
+		cout << initiatorChar;
 		cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); cout << " $>" << endl;
 	}
 	return;
@@ -459,10 +545,10 @@ void program_node::evaluate(){
 	if(printStatement){
 		cout << "===================================================PRINT========================================================================" << endl;
 		statementList->print();
-		cout << "================================================EVALUATE========================================================================" << endl;
-		statementList->evaluate();
-		cout << "================================================PRINT+EVALUATE==================================================================" << endl;
-		statementList->print_evaluate();
+		// cout << "================================================EVALUATE========================================================================" << endl;
+		// statementList->evaluate();
+		// cout << "================================================PRINT+EVALUATE==================================================================" << endl;
+		// statementList->print_evaluate();
 		cout << "================================================================================================================================" << endl;
 	}
 	return;

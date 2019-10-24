@@ -118,10 +118,10 @@ statement_list:             statement_block statement_list { $2->insert_statemen
                         ;
 
 statement_block:            assignment_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
-                        |   declaration_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
-                        |   tertiary_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
-                        |   control_statement { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
-                        |   loops { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   declaration_statement TERMINATOR { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   tertiary_statement TERMINATOR { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   control_statement { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   loops { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
                         ;
                         /* |   expression TERMINATOR
                         |   function_declaration
@@ -187,10 +187,10 @@ else_statement:                 ELSE '{' statement_list '}' {cout << line_number
                             ;
 
 
-loops:                      WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl; $$ = new while_statement_node($3, $6); $$->print(); }
+loops:                      WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE Statement" << endl; $$ = new while_statement_node($3, $6); $$->setTerminatorChar("\n"); }
+                        |   FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) Statement" << endl; $$ = new for_statement_node($2, $4, $6, $8); $$->setTerminatorChar("\n"); }
+                        /* |   FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) Statement" << endl; $$ = new for_statement_node($2, $4, $6, $8); } */
                         ;
-                        /* |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl; free($2);}
-                        |   FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl; free($2);} */
 
 /* break_statement:            BREAK {cout << line_number << ": BREAK" << endl;} ; */
 

@@ -12,57 +12,87 @@ check = a --5;
 if (abc == 5)
 {
     cas = abc+asb;
+    if(cas < 0){
+        cas = 0;
+    }
+    elif(cas > 0){
+        cas = 0;
+    }
+    else{
+        cas = 0;
+    }
 }
 
 if (abc == 5)
 {
     cas = abc+asb;
+    if(cas < 0){
+        cas = 0;
+    }
+    else{
+        cas = 0;
+    }
 }
 else
 {
     aa = aab + asdad;
-}
-
-
-if (abc == 5)
-{
-    cas = abc+asb;
-}
-elif(abc >= 5)
-{
-    sadasd = sad - sad ;
-}
-else
-{
-    aa = aab + asdad;
-}
-
-
-
-while (a<=10)
-{
-as = asda + sadsa;
-das = das + 1;
-}
-
-
-for a = 2,8
-{
-    c = c + 1;
-    asdsad = 5 + 5;
-    asdsda = asdasd + 45;
-    (a == b)? a=b+5; : a=c+10;
-}
-
-
-for ab = 1,1,10
-{
-    c = c + 1;
-    for ab = 1,1,10
-    {
-        c = c + 1;
+    if(cas < 0){
+        cas = 0;
+    }
+    else{
+        cas = 0;
     }
 }
 
 
-for a = 2,8{c = c+1;}
+if (abc == 5)
+{
+    cas = abc+asb;
+    if(cas){
+        cas = 0;
+    }
+}
+elif(abc >= 5)
+{
+    sadasd = sad - sad ;
+    if(cas){
+        cas = 0;
+    }
+}
+else
+{
+    aa = aab + asdad;
+    if(cas){
+        cas = 0;
+    }
+}
+
+
+a = 5;
+while (a<=10)
+{
+as = asda + sadsa;
+das = das + 1;
+a = a + 1;
+}
+
+for a = 2,a<=8,a=a+1{c = c+1;}
+
+c=0;b=-5;
+for a = 2,a<=8,a=a*2
+{
+    c = c + 1;
+    asdsad = 5 + 5;
+    asdsda = asdasd + 45;
+    (a == b)? a=b+5 : a=c+10;
+}
+
+c=0;
+for ab = 10,ab,ab=ab/2
+{
+    c = c + 1;
+    for cd = 1,cd<=c,cd=cd+1
+    {
+        asdsda = asdsda - 1;
+    }
+}
