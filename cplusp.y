@@ -28,15 +28,18 @@
   char *sval;
   char *vval;
   char *inval;
-  char *dtype;
+  char *datatype;
   program_node *prog;
-  list<statement_node *> *stmt_list;
+  statement_list_node *stmt_list;
   statement_node *stmt;
   expression_node *exp_node;
   assignment_statement_node *assign_node;
   value_node *val_node;
   declaration_statement_node *decl_node;
   control_statement_node *ctrl_node;
+  list<assignment_statement_node *> *asgn_list;
+  if_statement_node *if_node;
+  loop_statement_node *loop_node;
 }
 
 // Define the "terminal symbol" token types I'm going to use (in CAPS
@@ -72,11 +75,11 @@
 %token <sval> STRING
 %token <vval> VARIABLE
 %token <inval> INVALID
-%token <dtype> TYPE_INT
-%token <dtype> TYPE_FLOAT
-%token <dtype> TYPE_CHAR
-%token <dtype> TYPE_BOOL
-%token <dtype> TYPE_FILE
+%token <datatype> TYPE_INT
+%token <datatype> TYPE_FLOAT
+%token <datatype> TYPE_CHAR
+%token <datatype> TYPE_BOOL
+%token <datatype> TYPE_FILE
 
 /* Operator Associativity */
 %right  ASSIGNMENT
@@ -93,34 +96,36 @@
 %left   '(' ')'
 
 /* Non-Terminal Typed tokens */
-%type <prog> program
-%type <stmt_list> statement_list
-%type <stmt> statement_block statement
-%type <exp_node> expression
-%type <assign_node> assignment_statement
-%type <val_node> value
-%type <decl_node> declaration_statement
-%type <ctrl_node> control_statement
-%type <dtype> data_type
-
+%type <prog>            program
+%type <stmt_list>       statement_list
+%type <stmt>            statement_block         statement
+%type <exp_node>        expression
+%type <assign_node>     assignment_statement
+%type <val_node>        value
+%type <decl_node>       declaration_statement
+%type <ctrl_node>       control_statement       tertiary_statement
+%type <datatype>        data_type
+%type <if_node>         else_statement
+%type <loop_node>       loops
 %%
 // This is the real grammar that bison will parse:
-program:                    statement_list { $$ = new program_node($1, true, '\n'); root = $$; }
-                        |   {cout << "Empty file" << endl; $$ = new program_node(new list<statement_node *>(), true, '\n'); root = $$; }
+program:                    statement_list { $$ = new program_node($1, true, "\n"); root = $$; }
+                        |   {cout << "Empty file" << endl; $$ = new program_node(new statement_list_node(new list<statement_node*>), true, "\n"); root = $$; }
                         ;
 
-statement_list:             statement_block statement_list { $2->push_front($1); $$ = $2; }
-                        |   statement_block { $$ = new list<statement_node *>(1, $1); }
+statement_list:             statement_block statement_list { $2->insert_statement($1); $$ = $2; }
+                        |   statement_block { $$ = new statement_list_node(new list<statement_node *>(1, $1)); }
                         ;
 
-statement_block:            assignment_statement TERMINATOR { $1->setTerminatorChar('\n'); $1->setPrintStatement(true); $1->print(); $1->evaluate(); $$ = $1; }
-                        |   declaration_statement TERMINATOR { $1->setTerminatorChar('\n'); $1->setPrintStatement(true); $1->print(); $1->evaluate(); $$ = $1; }
-                        |   control_statement TERMINATOR { $1->setTerminatorChar('\n'); $1->setPrintStatement(true); $1->print(); $1->evaluate(); $$ = $1; }
+statement_block:            assignment_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   declaration_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   tertiary_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   control_statement { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   loops { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
                         ;
                         /* |   expression TERMINATOR
                         |   function_declaration
                         |   function_call TERMINATOR
-                        |   loops
                         |   break_statement TERMINATOR
                         |   return_statement TERMINATOR */
 
@@ -170,16 +175,22 @@ declaration_statement:      data_type VARIABLE ASSIGNMENT expression {cout << li
                         |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Matrix declaration with definition" << endl; free($1);}
                         |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl; free($1);} */
 
-control_statement:          '(' expression ')' '?' statement ':' statement {cout << line_number << ": Tertiary Statement" << endl; $$ = new tertiary_statement_node($2, $5, $7); }
-                        /* |   IF '(' expression ')' '{' statement_list '}' {cout << line_number << ": IF stmt" << endl;}
-                        |   IF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELSE stmt" << endl;}
-                        |   IF '(' expression ')' '{' statement_list '}' ELIF '(' expression ')' '{' statement_list '}' ELSE '{' statement_list '}' {cout << line_number << ": IF ELIF ELSE stmt" << endl;} */
+tertiary_statement:         '(' expression ')' '?' statement ':' statement {cout << line_number << ": Tertiary Statement" << endl; $$ = new tertiary_statement_node($2, $5, $7); }
                         ;
 
-/* loops:                      FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl; free($2);}
-                        |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl; free($2);}
-                        |   WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl;}
-                        ; */
+control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {cout << line_number << ": If Statement" << endl; $8->insert_condition(" IF ", $3, $6); $8->print(); $$ = $8; }
+                        ;
+
+else_statement:                 ELSE '{' statement_list '}' {cout << line_number << ": Else Statement" << endl; $$ = new if_statement_node(new list<string>(1, "ELSE"), new list<expression_node*>(1, new value_node(true)), new list<statement_list_node*>(1, $3)); }
+                            |   ELIF '(' expression ')' '{' statement_list '}' else_statement {cout << line_number << ": Else if Statement" << endl; $8->insert_condition("ELIF", $3, $6); $$ = $8; }
+                            |   { $$ = new if_statement_node(new list<string>, new list<expression_node*>, new list<statement_list_node*>); }
+                            ;
+
+
+loops:                      WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE stmt" << endl; $$ = new while_statement_node($3, $6); $$->print(); }
+                        ;
+                        /* |   FOR VARIABLE ASSIGNMENT expression ',' expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) stmt" << endl; free($2);}
+                        |   FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) stmt" << endl; free($2);} */
 
 /* break_statement:            BREAK {cout << line_number << ": BREAK" << endl;} ; */
 
@@ -244,7 +255,8 @@ expression:                 expression LOGOR        expression  { $$ = new opera
                         |   TYPE_VOID                   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
                         ; */
 
-/* function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;} ; */
+/* function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;}
+                        ; */
 %%
 
 int main(int, char**) {
@@ -272,7 +284,7 @@ int main(int, char**) {
 }
 
 void yyerror(const char *s) {
-  cout << "EEK, parse error on line number " << line_number << "!  Message: " << s << endl;
+  cout << "OOPs, parse error on line number " << line_number << "!  Message: " << s << endl;
   // might as well halt now:
   /* return line_number; */
   exit(line_number);

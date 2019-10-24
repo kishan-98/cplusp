@@ -221,158 +221,276 @@ struct MYDATA {
 
 class expression_node{
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 public:
 	dtype dataNode;
-	virtual void setTerminatorChar(char term){terminatorChar = term; return;}
+	virtual void setInitiatorChar(string init){initiatorChar = init; return;}
+	virtual void setTerminatorChar(string term){terminatorChar = term; return;}
 	virtual void setPrintStatement(bool print){printStatement = print; return;}
 	virtual void print(){cout << " "; return;}
 	virtual dtype evaluate(){return dtype();}
+	virtual void print_evaluate(){cout << " "; return;};
 };
 
 class unary_minus_node : public expression_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	expression_node *expNode;
 public:
-	unary_minus_node(expression_node *exp_node, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	unary_minus_node(expression_node *exp_node, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	dtype evaluate();
+	void print_evaluate();
 };
 
 class operator_node : public expression_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	expression_node *leftNode;
 	expression_node *rightNode;
 	string operatorNode;
 public:
-	operator_node(expression_node *left, string op, expression_node *right, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	operator_node(expression_node *left, string op, expression_node *right, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	dtype evaluate();
+	void print_evaluate();
 };
 
 class value_node : public expression_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 public:
-	value_node(bool value, bool print = false, char term = '\0');
-	value_node(char value, bool print = false, char term = '\0');
-	value_node(int value, bool print = false, char term = '\0');
-	value_node(float value, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	value_node(bool value, bool print = false, string term = "", string init = "");
+	value_node(char value, bool print = false, string term = "", string init = "");
+	value_node(int value, bool print = false, string term = "", string init = "");
+	value_node(float value, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	dtype evaluate();
+	void print_evaluate();
 };
 
 class variable_node : public expression_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	string variableID;
 public:
-	variable_node(string id, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	variable_node(string id, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	dtype evaluate();
+	void print_evaluate();
 };
 
 class statement_node{
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 public:
-	virtual void setTerminatorChar(char) = 0;
+	virtual void setInitiatorChar(string) = 0;
+	virtual void setTerminatorChar(string) = 0;
 	virtual void setPrintStatement(bool) = 0;
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
+	virtual void print_evaluate() = 0;
+};
+
+class statement_list_node : public statement_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+	bool printStatement;
+	list<statement_node *> *statementList;
+public:
+	statement_list_node(list<statement_node *> *statement_list, bool print = false, string term = "", string init = "");
+	void insert_statement(statement_node *stmt_node);
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
+	void setPrintStatement(bool print){printStatement = print; return;}
+	void print();
+	void evaluate();
+	void print_evaluate();
+};
+
+class expression_list_node : public statement_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+	bool printStatement;
+	list<expression_node *> *expressionList;
+public:
+	expression_list_node(list<expression_node *> *expression_list, bool print = false, string term = "", string init = "");
+	void insert_expression(expression_node *stmt_node);
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
+	void setPrintStatement(bool print){printStatement = print; return;}
+	void print();
+	void evaluate();
+	void print_evaluate();
 };
 
 class expression_statement_node : public statement_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	expression_node *expressionNode;
 public:
-	expression_statement_node(expression_node *expr_node, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	expression_statement_node(expression_node *expr_node, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	void evaluate();
+	void print_evaluate();
 };
 
 class control_statement_node : public statement_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 public:
-	virtual void setTerminatorChar(char) = 0;
+	virtual void setInitiatorChar(string) = 0;
+	virtual void setTerminatorChar(string) = 0;
 	virtual void setPrintStatement(bool) = 0;
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
+	virtual void print_evaluate() = 0;
 };
 
 class tertiary_statement_node : public control_statement_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	dtype dataNode;
 	expression_node *expressionNode;
 	statement_node *trueExpressionStatement;
 	statement_node *falseExpressionStatement;
 public:
-	tertiary_statement_node(expression_node *expr_node, statement_node *true_statement, statement_node *false_statement, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	tertiary_statement_node(expression_node *expr_node, statement_node *true_statement, statement_node *false_statement, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	void evaluate();
+	void print_evaluate();
+};
+
+class if_statement_node : public control_statement_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+	bool printStatement;
+	list<string> *condType;
+	list<expression_node *> *expressionList;
+	list<statement_list_node *> *statementList;
+public:
+	if_statement_node(list<string> *cond_type, list<expression_node *> *expression_list, list<statement_list_node *> *statement_list, bool print = false, string term = "", string init = "");
+	void insert_condition(string cond_type, expression_node *expr_node, statement_list_node *stmt_node);
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
+	void setPrintStatement(bool print){printStatement = print; return;}
+	void print();
+	void evaluate();
+	void print_evaluate();
+};
+
+class loop_statement_node : public statement_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+public:
+	virtual void setInitiatorChar(string) = 0;
+	virtual void setTerminatorChar(string) = 0;
+	virtual void setPrintStatement(bool) = 0;
+	virtual void print() = 0;
+	virtual void evaluate() = 0;
+	virtual void print_evaluate() = 0;
+};
+
+class while_statement_node : public loop_statement_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+	bool printStatement;
+	expression_node *expressionNode;
+	statement_list_node *statementList;
+public:
+	while_statement_node(expression_node *expr_node, statement_list_node *statement_list, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
+	void setPrintStatement(bool print){printStatement = print; return;}
+	void print();
+	void evaluate();
+	void print_evaluate();
 };
 
 class declaration_statement_node : public statement_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	string variableID, dataType;
 	expression_node *expressionNode;
 public:
-	declaration_statement_node(string data_type, string id, expression_node *expr_node, bool print = false, char term = '\0');
-	// declaration_statement_node(string id, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	declaration_statement_node(string data_type, string id, expression_node *expr_node, bool print = false, string term = "", string init = "");
+	// declaration_statement_node(string id, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	void evaluate();
+	void print_evaluate();
 };
 
 class assignment_statement_node : public statement_node {
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
 	string variableID;
 	expression_node *expressionNode;
 public:
-	assignment_statement_node(string id, expression_node *expr_node, bool print = false, char term = '\0');
-	void setTerminatorChar(char term){terminatorChar = term; return;}
+	assignment_statement_node(string id, expression_node *expr_node, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
 	void setPrintStatement(bool print){printStatement = print; return;}
 	void print();
 	void evaluate();
+	void print_evaluate();
 };
 
 class program_node{
 protected:
-	char terminatorChar;
+	string initiatorChar;
+	string terminatorChar;
 	bool printStatement;
-	list<statement_node *> *statementList;
+	statement_list_node *statementList;
 public:
-	program_node(list<statement_node *> *stmt_list, bool print = false, char term = '\0');
+	program_node(statement_list_node *stmt_list, bool print = false, string term = "", string init = "");
 	void evaluate();
+	void print_evaluate();
 };
 
 extern program_node *root;

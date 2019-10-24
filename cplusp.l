@@ -17,11 +17,11 @@ true                    {   yylval.bval = true; return BOOL;}
 True                    {   yylval.bval = true; return BOOL;}
 false                   {   yylval.bval = false; return BOOL;}
 False                   {   yylval.bval = false; return BOOL;}
-int                     {   yylval.dtype = strdup("TYPE_INT"); return TYPE_INT;}
-float                   {   yylval.dtype = strdup("TYPE_FLOAT"); return TYPE_FLOAT;}
-char                    {   yylval.dtype = strdup("TYPE_CHAR"); return TYPE_CHAR;}
-bool                    {   yylval.dtype = strdup("TYPE_BOOL"); return TYPE_BOOL;}
-File                    {   yylval.dtype = strdup("TYPE_FILE"); return TYPE_FILE;}
+int                     {   yylval.datatype = strdup("TYPE_INT"); return TYPE_INT;}
+float                   {   yylval.datatype = strdup("TYPE_FLOAT"); return TYPE_FLOAT;}
+char                    {   yylval.datatype = strdup("TYPE_CHAR"); return TYPE_CHAR;}
+bool                    {   yylval.datatype = strdup("TYPE_BOOL"); return TYPE_BOOL;}
+File                    {   yylval.datatype = strdup("TYPE_FILE"); return TYPE_FILE;}
 void                    {   return TYPE_VOID;}
 =                       {   return ASSIGNMENT; }
 [!~+\-*/%&|^]           {   return yytext[0];}

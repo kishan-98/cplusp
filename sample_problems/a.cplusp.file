@@ -39,6 +39,12 @@ else
 
 
 
+while (a<=10)
+{
+as = asda + sadsa;
+das = das + 1;
+}
+
 
 for a = 2,8
 {
@@ -58,11 +64,5 @@ for ab = 1,1,10
     }
 }
 
-
-while (a<=10)
-{
-    as = asda + sadsa;
-    das = das + 1;
-}
 
 for a = 2,8{c = c+1;}
