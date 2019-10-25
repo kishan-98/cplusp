@@ -73,6 +73,68 @@ void unary_minus_node::print_evaluate(){
 }
 
 
+unary_not_node::unary_not_node(expression_node *exp_node, bool print, string term, string init) : initiatorChar(init), terminatorChar(term), printStatement(print), expNode(exp_node) {
+}
+void unary_not_node::print(){
+	cout << initiatorChar;
+	cout << "<# ! "; expNode->print(); cout << " #>";
+	cout << terminatorChar;
+	return;
+}
+dtype unary_not_node::evaluate(){
+	dtype expData 	=	expNode->evaluate();
+	dataNode = expData.not_logical();
+	if(printStatement){
+		cout << initiatorChar;
+		cout << "\t<$ unary_not_node: ! "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
+	}
+	return dataNode;
+}
+void unary_not_node::print_evaluate(){
+	cout << initiatorChar;
+	cout << "<# ! "; expNode->print(); cout << " #>";
+	cout << terminatorChar;
+	dtype expData 	=	expNode->evaluate();
+	dataNode = expData.not_logical();
+	if(printStatement){
+		cout << initiatorChar;
+		cout << "\t<$ unary_not_node: ! "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
+	}
+	return;
+}
+
+
+unary_complement_node::unary_complement_node(expression_node *exp_node, bool print, string term, string init) : initiatorChar(init), terminatorChar(term), printStatement(print), expNode(exp_node) {
+}
+void unary_complement_node::print(){
+	cout << initiatorChar;
+	cout << "<# ~ "; expNode->print(); cout << " #>";
+	cout << terminatorChar;
+	return;
+}
+dtype unary_complement_node::evaluate(){
+	dtype expData 	=	expNode->evaluate();
+	dataNode = expData.not_binary();
+	if(printStatement){
+		cout << initiatorChar;
+		cout << "\t<$ unary_complement_node: ~ "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
+	}
+	return dataNode;
+}
+void unary_complement_node::print_evaluate(){
+	cout << initiatorChar;
+	cout << "<# ~ "; expNode->print(); cout << " #>";
+	cout << terminatorChar;
+	dtype expData 	=	expNode->evaluate();
+	dataNode = expData.not_binary();
+	if(printStatement){
+		cout << initiatorChar;
+		cout << "\t<$ unary_complement_node: ~ "; expData.print(); cout << " = "; dataNode.print(); cout << " $>" << endl;
+	}
+	return;
+}
+
+
 value_node::value_node(bool value, bool print, string term, string init){
 	initiatorChar	=	init;
 	terminatorChar	=	term;
@@ -545,8 +607,8 @@ void program_node::evaluate(){
 	if(printStatement){
 		cout << "===================================================PRINT========================================================================" << endl;
 		statementList->print();
-		// cout << "================================================EVALUATE========================================================================" << endl;
-		// statementList->evaluate();
+		cout << "================================================EVALUATE========================================================================" << endl;
+		statementList->evaluate();
 		// cout << "================================================PRINT+EVALUATE==================================================================" << endl;
 		// statementList->print_evaluate();
 		cout << "================================================================================================================================" << endl;

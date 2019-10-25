@@ -209,11 +209,41 @@ struct MYDATA {
 		}
 	}
 	struct MYDATA negate(){
-		if(dataType == "TYPE_INT"){
+		if(dataType == "TYPE_CHAR"){
+			return MYDATA(-dataValue.valueChar);
+		}
+		else if(dataType == "TYPE_BOOL"){
+			return MYDATA(-dataValue.valueBool);
+		}
+		else if(dataType == "TYPE_INT"){
 			return MYDATA(-dataValue.valueInteger);
 		}
 		else if(dataType == "TYPE_FLOAT"){
 			return MYDATA(-dataValue.valueFloat);
+		}
+		return MYDATA();
+	}
+	struct MYDATA not_logical(){
+		if(dataType == "TYPE_CHAR"){
+			return MYDATA(!dataValue.valueChar);
+		}
+		else if(dataType == "TYPE_BOOL"){
+			return MYDATA(!dataValue.valueBool);
+		}
+		else if(dataType == "TYPE_INT"){
+			return MYDATA(!dataValue.valueInteger);
+		}
+		return MYDATA();
+	}
+	struct MYDATA not_binary(){
+		if(dataType == "TYPE_CHAR"){
+			return MYDATA(~dataValue.valueChar);
+		}
+		else if(dataType == "TYPE_BOOL"){
+			return MYDATA(~dataValue.valueBool);
+		}
+		else if(dataType == "TYPE_INT"){
+			return MYDATA(~dataValue.valueInteger);
 		}
 		return MYDATA();
 	}
@@ -244,6 +274,42 @@ protected:
 	expression_node *expNode;
 public:
 	unary_minus_node(expression_node *exp_node, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void addInitiatorChar(string term){initiatorChar += term; return;}
+	void remInitiatorChar(string term){if(initiatorChar.length() >= term.length() && initiatorChar.substr(initiatorChar.length() - term.length(), term.length()) == term){initiatorChar = initiatorChar.substr(0, initiatorChar.length() - term.length());} return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
+	void setPrintStatement(bool print){printStatement = print; return;}
+	void print();
+	dtype evaluate();
+	void print_evaluate();
+};
+
+class unary_not_node : public expression_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+	bool printStatement;
+	expression_node *expNode;
+public:
+	unary_not_node(expression_node *exp_node, bool print = false, string term = "", string init = "");
+	void setInitiatorChar(string init){initiatorChar = init; return;}
+	void addInitiatorChar(string term){initiatorChar += term; return;}
+	void remInitiatorChar(string term){if(initiatorChar.length() >= term.length() && initiatorChar.substr(initiatorChar.length() - term.length(), term.length()) == term){initiatorChar = initiatorChar.substr(0, initiatorChar.length() - term.length());} return;}
+	void setTerminatorChar(string term){terminatorChar = term; return;}
+	void setPrintStatement(bool print){printStatement = print; return;}
+	void print();
+	dtype evaluate();
+	void print_evaluate();
+};
+
+class unary_complement_node : public expression_node {
+protected:
+	string initiatorChar;
+	string terminatorChar;
+	bool printStatement;
+	expression_node *expNode;
+public:
+	unary_complement_node(expression_node *exp_node, bool print = false, string term = "", string init = "");
 	void setInitiatorChar(string init){initiatorChar = init; return;}
 	void addInitiatorChar(string term){initiatorChar += term; return;}
 	void remInitiatorChar(string term){if(initiatorChar.length() >= term.length() && initiatorChar.substr(initiatorChar.length() - term.length(), term.length()) == term){initiatorChar = initiatorChar.substr(0, initiatorChar.length() - term.length());} return;}

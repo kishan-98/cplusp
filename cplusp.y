@@ -93,6 +93,9 @@
 %left   LSHIFT RSHIFT
 %left   '+' '-'
 %left   '*' '/' '%'
+%left   UMINUS
+%nonassoc '!' '~'
+%left   '[' ']'
 %left   '(' ')'
 
 /* Non-Terminal Typed tokens */
@@ -122,9 +125,9 @@ statement_block:            assignment_statement TERMINATOR { $1->setTerminatorC
                         |   tertiary_statement TERMINATOR { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
                         |   control_statement { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
                         |   loops { $1->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
+                        |   expression TERMINATOR { $$ = new expression_statement_node($1); $$->setTerminatorChar("\n"); /*$1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ }
                         ;
-                        /* |   expression TERMINATOR
-                        |   function_declaration
+                        /* |   function_declaration
                         |   function_call TERMINATOR
                         |   break_statement TERMINATOR
                         |   return_statement TERMINATOR */
@@ -219,7 +222,9 @@ expression:                 expression LOGOR        expression  { $$ = new opera
                         |   expression '/'          expression  { $$ = new operator_node($1, "/", $3); }
                         |   expression '%'          expression  { $$ = new operator_node($1, "%", $3); }
                         |   '(' expression ')'                  { $$ = $2; }
-                        |   '-' expression                      { $$ = new unary_minus_node($2); }
+                        |   '-' expression    %prec UMINUS      { $$ = new unary_minus_node($2); }
+                        |   '!' expression                      { $$ = new unary_not_node($2); }
+                        |   '~' expression                      { $$ = new unary_complement_node($2); }
                         |   VARIABLE { $$ = new variable_node($1); }
                         /* |   VARIABLE '[' expression ']' {free($1);}
                         |   VARIABLE '[' expression ']' '[' expression ']' {free($1);} */
