@@ -7,9 +7,11 @@
   int line_number = 1;
 %}
 
+%x ERROR
+
 %%
 [ \t]         ;
-[\n]                    {   line_number++;  }
+[\n]                    {   line_number++; cout << line_number << "> "; }
 [0-9]+                  {   yylval.ival = atoi(yytext); return INT;}
 [0-9]*\.[0-9]+          {   yylval.fval = atof(yytext); return FLOAT;}
 \'[a-zA-Z0-9]\'         {   yylval.cval = yytext[1]; return CHAR;}
@@ -47,12 +49,17 @@ break                   {   return BREAK; }
 [\(\)\{\}?:,\[\]]       {   return yytext[0]; }
 
 [a-zA-Z]+[a-zA-Z0-9_]*  {   yylval.vval = strdup(yytext); return VARIABLE;}
-\"([a-zA-Z0-9]|[ ])+\"        {
-  // We have to strdup yytext because Flex will change it for the next token.
-  // Note that this memory must be freed somewhere, so that's why we call
-  // free() above in the Bison section.  (Aside: we use free() instead of
-  // delete because strdup is a C function that uses malloc, not a C++
-  // function that uses new.)
-                        yylval.sval = strdup(yytext); return STRING;}
-.                   {   yylval.inval = strdup(yytext); return INVALID; }
+\"([a-zA-Z0-9]|[ ])+\"  {
+                          // We have to strdup yytext because Flex will change it for the next token.
+                          // Note that this memory must be freed somewhere, so that's why we call
+                          // free() above in the Bison section.  (Aside: we use free() instead of
+                          // delete because strdup is a C function that uses malloc, not a C++
+                          // function that uses new.)
+                          yylval.sval = strdup(yytext); return STRING;}
+
+.                       { cout << "Invalid token detected" << endl; BEGIN(ERROR); yymore(); }
+<ERROR>[^[a-zA-Z0-9+\-*/()= \t\n\f\r] { yymore(); }
+<ERROR>(.|\n) { yyless(yyleng-1); printf("error token: %s on line %d\n", yytext, line_number);
+           BEGIN(INITIAL); }
+
 %%

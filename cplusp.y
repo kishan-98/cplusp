@@ -95,7 +95,7 @@
 %left   '*' '/' '%'
 %left   UMINUS
 %nonassoc '!' '~'
-%left   '[' ']'
+%left   '['']'
 %left   '(' ')'
 
 /* Non-Terminal Typed tokens */
@@ -110,14 +110,16 @@
 %type <datatype>        data_type
 %type <if_node>         else_statement
 %type <loop_node>       loops
+
+%start program /* Used to describe which is the initial grammar state */
+%error-verbose
+
 %%
 // This is the real grammar that bison will parse:
-program:                    statement_list { $$ = new program_node($1, true, "\n"); root = $$; }
-                        |   {cout << "Empty file" << endl; $$ = new program_node(new statement_list_node(new list<statement_node*>), true, "\n"); root = $$; }
-                        ;
 
-statement_list:             statement_block statement_list { $2->insert_statement($1); $$ = $2; }
+statement_list:             statement_list statement_block { $1->insert_statement($2); $$ = $1; }
                         |   statement_block { $$ = new statement_list_node(new list<statement_node *>(1, $1)); }
+                        |   statement_list error { $$ = $1; yyclearin; }
                         ;
 
 statement_block:            assignment_statement TERMINATOR { $1->setTerminatorChar("\n"); $1->setPrintStatement(true); /*$1->print(); $1->evaluate();*/ $$ = $1; }
@@ -162,6 +164,10 @@ assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number 
 
 declaration_statement:      data_type VARIABLE ASSIGNMENT expression {cout << line_number << ": Declaration statement with assignment" << endl; $$ = new declaration_statement_node($1, $2, $4); }
                         |   data_type VARIABLE {cout << line_number << ": Declaration statement without assignment" << endl; $$ = new declaration_statement_node($1, $2, new expression_node()); }
+                        ;
+
+program:                    statement_list { $$ = new program_node($1, true, "\n"); root = $$; }
+                        |   {cout << "Empty file" << endl; $$ = new program_node(new statement_list_node(new list<statement_node*>), true, "\n"); root = $$; }
                         ;
 
 /* variable_list:              VARIABLE ',' variable_list {cout << line_number << ": Variable declaration without definition" << endl; free($1);}
@@ -264,6 +270,8 @@ expression:                 expression LOGOR        expression  { $$ = new opera
                         ; */
 %%
 
+int parse_status = 0;
+
 int main(int, char**) {
     // Initialize the data groups
     data_groups[""]             =   make_pair(0, 0);
@@ -281,16 +289,19 @@ int main(int, char**) {
     // Set Flex to read from it instead of defaulting to STDIN:
     /* yyin = myfile; */
 
+    parse_status = 0;
+
     // Parse through the input:
+    cout << line_number << "> ";
     yyparse();
     root->evaluate();
-  return 0;
-
+    return parse_status;
 }
 
 void yyerror(const char *s) {
-  cout << "OOPs, parse error on line number " << line_number << "!  Message: " << s << endl;
+  cout << "OOPs, " << s << " on line number " << line_number << "!" << endl;
+  parse_status = 251;
   // might as well halt now:
   /* return line_number; */
-  exit(line_number);
+  /* exit(line_number); */
 }
