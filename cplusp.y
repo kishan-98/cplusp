@@ -187,7 +187,7 @@ program:                    statement_list { $$ = new program_node($1, true, "\n
 tertiary_statement:         '(' expression ')' '?' statement ':' statement {cout << line_number << ": Tertiary Statement" << endl; $$ = new tertiary_statement_node($2, $5, $7); }
                         ;
 
-control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {cout << line_number << ": If Statement" << endl; $8->insert_condition(" IF ", $3, $6); $8->print(); $$ = $8; }
+control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {cout << line_number << ": If Statement" << endl; $8->insert_condition(" IF ", $3, $6); /*$8->print();*/ $$ = $8; }
                         ;
 
 else_statement:                 ELSE '{' statement_list '}' {cout << line_number << ": Else Statement" << endl; $$ = new if_statement_node(new list<string>(1, "ELSE"), new list<expression_node*>(1, new value_node(true)), new list<statement_list_node*>(1, $3)); }
@@ -294,6 +294,7 @@ int main(int, char**) {
     // Parse through the input:
     cout << line_number << "> ";
     yyparse();
+    cout << endl;
     root->evaluate();
     return parse_status;
 }

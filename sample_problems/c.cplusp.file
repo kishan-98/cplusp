@@ -1,9 +1,9 @@
-return;
-break;
-
-for a = 2 , 8,   1{
+for a = 2 , a <= 8, a=a+1{
 	break;
 }
+
+return;
+break;
 
 int main(){
 return 0;
