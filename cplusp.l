@@ -11,7 +11,7 @@
 
 %%
 [ \t]         ;
-[\n]                    {   line_number++; cout << line_number << "> "; }
+[\n]                    {   line_number++; std::cout << line_number << "> "; }
 [0-9]+                  {   yylval.ival = atoi(yytext); return INT;}
 [0-9]*\.[0-9]+          {   yylval.fval = atof(yytext); return FLOAT;}
 \'[a-zA-Z0-9]\'         {   yylval.cval = yytext[1]; return CHAR;}
@@ -57,7 +57,7 @@ break                   {   return BREAK; }
                           // function that uses new.)
                           yylval.sval = strdup(yytext); return STRING;}
 
-.                       { cout << "Invalid token detected" << endl; BEGIN(ERROR); yymore(); }
+.                       { std::cout << "Invalid token detected" << std::endl; BEGIN(ERROR); yymore(); }
 <ERROR>[^[a-zA-Z0-9+\-*/()= \t\n\f\r] { yymore(); }
 <ERROR>(.|\n) { yyless(yyleng-1); printf("error token: %s on line %d\n", yytext, line_number);
            BEGIN(INITIAL); }

@@ -37,7 +37,7 @@
   value_node *val_node;
   declaration_statement_node *decl_node;
   control_statement_node *ctrl_node;
-  list<assignment_statement_node *> *asgn_list;
+  std::list<assignment_statement_node *> *asgn_list;
   if_statement_node *if_node;
   loop_statement_node *loop_node;
 }
@@ -118,7 +118,7 @@
 // This is the real grammar that bison will parse:
 
 statement_list:             statement_list statement_block { $1->insert_statement($2); $$ = $1; }
-                        |   statement_block { $$ = new statement_list_node(new list<statement_node *>(1, $1)); }
+                        |   statement_block { $$ = new statement_list_node(new std::list<statement_node *>(1, $1)); }
                         |   statement_list error { $$ = $1; yyclearin; }
                         ;
 
@@ -154,57 +154,57 @@ value:                      INT { $$ = new value_node($1); }
                         |   CHAR { $$ = new value_node($1); }
                         |   BOOL { $$ = new value_node($1); }
                         ;
-assignment_statement:       VARIABLE ASSIGNMENT expression {cout << line_number << ": Assignment statement" << endl; $$ = new assignment_statement_node($1, $3); } ;
-                        /* |   VARIABLE ASSIGNMENT expression ',' assignment_statement {cout << line_number << ": Assignment statement" << endl; $$ = new assignment_statement_node($1, $3); } ; */
+assignment_statement:       VARIABLE ASSIGNMENT expression {std::cout << line_number << ": Assignment statement" << std::endl; $$ = new assignment_statement_node($1, $3); } ;
+                        /* |   VARIABLE ASSIGNMENT expression ',' assignment_statement {std::cout << line_number << ": Assignment statement" << std::endl; $$ = new assignment_statement_node($1, $3); } ; */
                         ;
-                        /* |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' assignment_statement {cout << line_number << ": Array declaration with definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Array declaration with definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' assignment_statement {cout << line_number << ": Matrix declaration with definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl; free($1);} */
+                        /* |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' assignment_statement {std::cout << line_number << ": Array declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Array declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' assignment_statement {std::cout << line_number << ": Matrix declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Matrix declaration with definition" << std::endl; free($1);} */
 
-declaration_statement:      data_type VARIABLE ASSIGNMENT expression {cout << line_number << ": Declaration statement with assignment" << endl; $$ = new declaration_statement_node($1, $2, $4); }
-                        |   data_type VARIABLE {cout << line_number << ": Declaration statement without assignment" << endl; $$ = new declaration_statement_node($1, $2, new expression_node()); }
+declaration_statement:      data_type VARIABLE ASSIGNMENT expression {std::cout << line_number << ": Declaration statement with assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4); }
+                        |   data_type VARIABLE {std::cout << line_number << ": Declaration statement without assignment" << std::endl; $$ = new declaration_statement_node($1, $2, new expression_node()); }
                         ;
 
 program:                    statement_list { $$ = new program_node($1, true, "\n"); root = $$; }
-                        |   {cout << "Empty file" << endl; $$ = new program_node(new statement_list_node(new list<statement_node*>), true, "\n"); root = $$; }
+                        |   {std::cout << "Empty file" << std::endl; $$ = new program_node(new statement_list_node(new std::list<statement_node*>), true, "\n"); root = $$; }
                         ;
 
-/* variable_list:              VARIABLE ',' variable_list {cout << line_number << ": Variable declaration without definition" << endl; free($1);}
-                        |   VARIABLE {cout << line_number << ": Variable declaration without definition" << endl; free($1);}
-                        |   VARIABLE ASSIGNMENT expression ',' variable_list {cout << line_number << ": Variable declaration with definition" << endl; free($1);}
-                        |   VARIABLE ASSIGNMENT expression {cout << line_number << ": Variable declaration with definition" << endl; free($1);}
+/* variable_list:              VARIABLE ',' variable_list {std::cout << line_number << ": Variable declaration without definition" << std::endl; free($1);}
+                        |   VARIABLE {std::cout << line_number << ": Variable declaration without definition" << std::endl; free($1);}
+                        |   VARIABLE ASSIGNMENT expression ',' variable_list {std::cout << line_number << ": Variable declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE ASSIGNMENT expression {std::cout << line_number << ": Variable declaration with definition" << std::endl; free($1);}
                         ; */
-                        /* |   VARIABLE '[' expression ']' ',' variable_list {cout << line_number << ": Array declaration without definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' {cout << line_number << ": Array declaration without definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Array declaration with definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Array declaration with definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ',' variable_list {cout << line_number << ": Matrix declaration without definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' '[' expression ']' {cout << line_number << ": Matrix declaration without definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {cout << line_number << ": Matrix declaration with definition" << endl; free($1);}
-                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {cout << line_number << ": Matrix declaration with definition" << endl; free($1);} */
+                        /* |   VARIABLE '[' expression ']' ',' variable_list {std::cout << line_number << ": Array declaration without definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' {std::cout << line_number << ": Array declaration without definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {std::cout << line_number << ": Array declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Array declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ',' variable_list {std::cout << line_number << ": Matrix declaration without definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' {std::cout << line_number << ": Matrix declaration without definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' variable_list {std::cout << line_number << ": Matrix declaration with definition" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Matrix declaration with definition" << std::endl; free($1);} */
 
-tertiary_statement:         '(' expression ')' '?' statement ':' statement {cout << line_number << ": Tertiary Statement" << endl; $$ = new tertiary_statement_node($2, $5, $7); }
+tertiary_statement:         '(' expression ')' '?' statement ':' statement {std::cout << line_number << ": Tertiary Statement" << std::endl; $$ = new tertiary_statement_node($2, $5, $7); }
                         ;
 
-control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {cout << line_number << ": If Statement" << endl; $8->insert_condition(" IF ", $3, $6); $8->print(); $$ = $8; }
+control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {std::cout << line_number << ": If Statement" << std::endl; $8->insert_condition(" IF ", $3, $6); $8->print(); $$ = $8; }
                         ;
 
-else_statement:                 ELSE '{' statement_list '}' {cout << line_number << ": Else Statement" << endl; $$ = new if_statement_node(new list<string>(1, "ELSE"), new list<expression_node*>(1, new value_node(true)), new list<statement_list_node*>(1, $3)); }
-                            |   ELIF '(' expression ')' '{' statement_list '}' else_statement {cout << line_number << ": Else if Statement" << endl; $8->insert_condition("ELIF", $3, $6); $$ = $8; }
-                            |   { $$ = new if_statement_node(new list<string>, new list<expression_node*>, new list<statement_list_node*>); }
+else_statement:                 ELSE '{' statement_list '}' {std::cout << line_number << ": Else Statement" << std::endl; $$ = new if_statement_node(new std::list<string>(1, "ELSE"), new std::list<expression_node*>(1, new value_node(true)), new std::list<statement_list_node*>(1, $3)); }
+                            |   ELIF '(' expression ')' '{' statement_list '}' else_statement {std::cout << line_number << ": Else if Statement" << std::endl; $8->insert_condition("ELIF", $3, $6); $$ = $8; }
+                            |   { $$ = new if_statement_node(new std::list<string>, new std::list<expression_node*>, new std::list<statement_list_node*>); }
                             ;
 
 
-loops:                      WHILE '(' expression ')' '{' statement_list '}' {cout << line_number << ": WHILE Statement" << endl; $$ = new while_statement_node($3, $6); $$->setTerminatorChar("\n"); }
-                        |   FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}' {cout << line_number << ": FOR(v,v,v) Statement" << endl; $$ = new for_statement_node($2, $4, $6, $8); $$->setTerminatorChar("\n"); }
-                        /* |   FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {cout << line_number << ": FOR(v,v) Statement" << endl; $$ = new for_statement_node($2, $4, $6, $8); } */
+loops:                      WHILE '(' expression ')' '{' statement_list '}' {std::cout << line_number << ": WHILE Statement" << std::endl; $$ = new while_statement_node($3, $6); $$->setTerminatorChar("\n"); }
+                        |   FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}' {std::cout << line_number << ": FOR(v,v,v) Statement" << std::endl; $$ = new for_statement_node($2, $4, $6, $8); $$->setTerminatorChar("\n"); }
+                        /* |   FOR VARIABLE ASSIGNMENT expression ',' expression '{' statement_list '}' {std::cout << line_number << ": FOR(v,v) Statement" << std::endl; $$ = new for_statement_node($2, $4, $6, $8); } */
                         ;
 
-/* break_statement:            BREAK {cout << line_number << ": BREAK" << endl;} ; */
+/* break_statement:            BREAK {std::cout << line_number << ": BREAK" << std::endl;} ; */
 
-/* return_statement:           RETURN expression   {cout << line_number << ": RETURN expression" << endl;}
-                        |   RETURN              {cout << line_number << ": RETURN without expression" << endl;}
+/* return_statement:           RETURN expression   {std::cout << line_number << ": RETURN expression" << std::endl;}
+                        |   RETURN              {std::cout << line_number << ": RETURN without expression" << std::endl;}
                         ; */
 
 /* operator:                   ASSIGNMENT | LOGOR | LOGAND | '|' | '^' | '&' | EQ | NE | GT | GE | LT | LE | LSHIFT | RSHIFT | '+' | '-' | '*' | '/' | '%'; */
@@ -256,17 +256,17 @@ expression:                 expression LOGOR        expression  { $$ = new opera
                         |
                         ; */
 
-/* function_name:              VARIABLE    {cout << line_number << ": User-defined function" << endl; free($1);}
-                        |   data_type   {cout << line_number << ": Predefined function" << endl;}
+/* function_name:              VARIABLE    {std::cout << line_number << ": User-defined function" << std::endl; free($1);}
+                        |   data_type   {std::cout << line_number << ": Predefined function" << std::endl;}
                         ; */
 
-/* function_declaration:       data_type                   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   data_type '[' ']'           function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   data_type '[' ']' '[' ']'   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
-                        |   TYPE_VOID                   function_name '(' parameter_list ')' '{' statement_list '}' {cout << line_number << ": Function declaration with parameters" << endl;}
+/* function_declaration:       data_type                   function_name '(' parameter_list ')' '{' statement_list '}' {std::cout << line_number << ": Function declaration with parameters" << std::endl;}
+                        |   data_type '[' ']'           function_name '(' parameter_list ')' '{' statement_list '}' {std::cout << line_number << ": Function declaration with parameters" << std::endl;}
+                        |   data_type '[' ']' '[' ']'   function_name '(' parameter_list ')' '{' statement_list '}' {std::cout << line_number << ": Function declaration with parameters" << std::endl;}
+                        |   TYPE_VOID                   function_name '(' parameter_list ')' '{' statement_list '}' {std::cout << line_number << ": Function declaration with parameters" << std::endl;}
                         ; */
 
-/* function_call:              function_name '(' argument_list ')' {cout << line_number << ": Function call with arguments" << endl;}
+/* function_call:              function_name '(' argument_list ')' {std::cout << line_number << ": Function call with arguments" << std::endl;}
                         ; */
 %%
 
@@ -283,7 +283,7 @@ int main(int, char**) {
     /* FILE *myfile = fopen("a.cplusp.file", "r"); */
     // Make sure it is valid:
     /* if (!myfile) {
-        cout << "I can't open a.cplusp.file!" << endl;
+        std::cout << "I can't open a.cplusp.file!" << std::endl;
     return -1;
     } */
     // Set Flex to read from it instead of defaulting to STDIN:
@@ -292,14 +292,14 @@ int main(int, char**) {
     parse_status = 0;
 
     // Parse through the input:
-    cout << line_number << "> ";
+    std::cout << line_number << "> ";
     yyparse();
     root->evaluate();
     return parse_status;
 }
 
 void yyerror(const char *s) {
-  cout << "OOPs, " << s << " on line number " << line_number << "!" << endl;
+  std::cout << "OOPs, " << s << " on line number " << line_number << "!" << std::endl;
   parse_status = 251;
   // might as well halt now:
   /* return line_number; */
