@@ -6,4 +6,5 @@ cplusp
 *.dot
 *.analysis
 check_all.sh
+.*.swp
 

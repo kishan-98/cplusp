@@ -294,7 +294,9 @@ int main(int, char**) {
     // Parse through the input:
     std::cout << line_number << "> ";
     yyparse();
+    std::cout << std::endl;
     root->evaluate();
+    root->generate();
     return parse_status;
 }
 

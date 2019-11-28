@@ -9,6 +9,18 @@
 // Store data type group, heirarchy and supported operators
 extern std::map<std::string, std::pair<int, int> > data_groups;
 
+// using namespace llvm;
+
+// The function getGlobalContext is depricated, so use declaration without definition
+// static LLVMContext &Context = getGlobalContext();
+static llvm::LLVMContext Context;
+static llvm::Module *ModuleOb = new llvm::Module("cplusp", Context);
+static llvm::IRBuilder<> Builder(Context);
+static std::vector<std::string> FuncArgs;
+// llvm::Value *ret;
+typedef llvm::SmallVector<llvm::BasicBlock *, 16> BBList;
+typedef llvm::SmallVector<llvm::Value *, 16> ValList;
+
 typedef struct MYDATA dtype;
 
 struct MYDATA {
@@ -243,9 +255,9 @@ struct MYDATA {
 		if(dataType == "TYPE_CHAR"){
 			return MYDATA(~dataValue.valueChar);
 		}
-		else if(dataType == "TYPE_BOOL"){
-			return MYDATA(~dataValue.valueBool);
-		}
+		// else if(dataType == "TYPE_BOOL"){
+		// 	return MYDATA(~dataValue.valueBool);
+		// }
 		else if(dataType == "TYPE_INT"){
 			return MYDATA(~dataValue.valueInteger);
 		}
@@ -268,6 +280,7 @@ public:
 	virtual void print(){std::cout << " "; return;}
 	virtual dtype evaluate(){return dtype();}
 	virtual void print_evaluate(){std::cout << " "; return;};
+	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
 };
 
 class unary_minus_node : public expression_node {
@@ -286,6 +299,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class unary_not_node : public expression_node {
@@ -304,6 +318,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class unary_complement_node : public expression_node {
@@ -322,6 +337,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class operator_node : public expression_node {
@@ -342,6 +358,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class value_node : public expression_node {
@@ -362,6 +379,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class variable_node : public expression_node {
@@ -380,6 +398,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class statement_node{
@@ -395,6 +414,7 @@ public:
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
 	virtual void print_evaluate() = 0;
+	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
 };
 
 class statement_list_node : public statement_node {
@@ -414,6 +434,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class expression_list_node : public statement_node {
@@ -433,6 +454,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class expression_statement_node : public statement_node {
@@ -451,6 +473,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class control_statement_node : public statement_node {
@@ -466,6 +489,7 @@ public:
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
 	virtual void print_evaluate() = 0;
+	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
 };
 
 class tertiary_statement_node : public control_statement_node {
@@ -487,6 +511,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class if_statement_node : public control_statement_node {
@@ -508,6 +533,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class loop_statement_node : public statement_node {
@@ -523,6 +549,7 @@ public:
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
 	virtual void print_evaluate() = 0;
+	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
 };
 
 class while_statement_node : public loop_statement_node {
@@ -542,6 +569,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class for_statement_node : public loop_statement_node {
@@ -563,6 +591,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class declaration_statement_node : public statement_node {
@@ -583,6 +612,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class assignment_statement_node : public statement_node {
@@ -602,6 +632,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
+	llvm::Value* generate(std::string storeNode = "");
 };
 
 class program_node{
@@ -614,8 +645,11 @@ public:
 	program_node(statement_list_node *stmt_list, bool print = false, std::string term = "", std::string init = "");
 	void evaluate();
 	void print_evaluate();
+	void generate(std::string storeNode = "");
 };
 
 extern program_node *root;
 extern std::map<std::string, dtype> value_table;
 extern std::map<std::string, bool> id_table;
+extern std::map<std::string, llvm::Value*> symbol_table;
+extern std::map<std::string, llvm::GlobalVariable*> variable_table;
