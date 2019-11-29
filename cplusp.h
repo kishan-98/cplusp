@@ -666,6 +666,7 @@ extern program_node *root;
 extern std::map<std::string, dtype> value_table;
 extern std::map<std::string, std::vector<dtype> > array1_table;
 extern std::map<std::string, std::vector<std::vector<dtype> > > array2_table;
+extern std::map<std::string, std::pair<int, int> > array_size;
 extern std::map<std::string, bool> id_table;
 extern std::map<std::string, llvm::Value*> symbol_table;
 extern std::map<std::string, llvm::GlobalVariable*> variable_table;

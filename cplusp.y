@@ -301,7 +301,7 @@ int main(int, char**) {
     yyparse();
     std::cout << std::endl;
     root->evaluate();
-    /* root->generate(); */
+    root->generate();
     return parse_status;
 }
 

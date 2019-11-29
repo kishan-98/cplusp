@@ -14,6 +14,9 @@ if (abc == 5)
     cas = abc+asb;
     if(cas < 0){
         cas = 0;
+	if(a > 0){
+		b = 5;
+	}
     }
     elif(cas > 0){
         cas = 0;

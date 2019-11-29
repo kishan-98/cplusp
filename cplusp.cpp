@@ -3,6 +3,7 @@
 std::map<std::string, dtype> value_table;
 std::map<std::string, std::vector<dtype> > array1_table;
 std::map<std::string, std::vector<std::vector<dtype> > > array2_table;
+std::map<std::string, std::pair<int, int> > array_size;
 std::map<std::string, bool> id_table;
 std::map<std::string, llvm::Value*> symbol_table;
 std::map<std::string, llvm::GlobalVariable*> variable_table;
@@ -33,6 +34,22 @@ llvm::GlobalVariable *createGlob(llvm::IRBuilder<> &Builder, std::string Name) {
 	gVar->setLinkage(llvm::GlobalValue::CommonLinkage);
 	gVar->setInitializer(llvm::ConstantInt::get(Context, llvm::APInt(32,0)));
 	gVar->setAlignment(4);
+	return gVar;
+}
+
+llvm::GlobalVariable *createGlob(llvm::IRBuilder<> &Builder, std::string Name, int N1) {
+	llvm::ArrayType * arr_type = llvm::ArrayType::get(llvm::Type::getInt32Ty(Context), N1);
+    //PointerType * ptr_typ = PointerType::get(arr_type, 0);
+    llvm::GlobalVariable * gVar = new llvm::GlobalVariable(*ModuleOb, arr_type, false, llvm::GlobalValue::ExternalLinkage, 0, Name);
+    gVar->setInitializer(llvm::ConstantAggregateZero::get(arr_type));
+	return gVar;
+}
+
+llvm::GlobalVariable *createGlob(llvm::IRBuilder<> &Builder, std::string Name, int N1, int N2) {
+	llvm::ArrayType * arr_type = llvm::ArrayType::get(llvm::Type::getInt32Ty(Context), N1*N2);
+    //PointerType * ptr_typ = PointerType::get(arr_type, 0);
+    llvm::GlobalVariable * gVar = new llvm::GlobalVariable(*ModuleOb, arr_type, false, llvm::GlobalValue::ExternalLinkage, 0, Name);
+    gVar->setInitializer(llvm::ConstantAggregateZero::get(arr_type));
 	return gVar;
 }
 
@@ -791,18 +808,21 @@ llvm::Value* for_statement_node::generate(bool loadVariable){
 
 
 declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(0), secondD(0), expressionNode(expr_node) {
+	array_size[variableID] = std::make_pair(0, 0);
 }
 declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, int N1, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(N1), secondD(0), expressionNode(expr_node) {
+	array_size[variableID] = std::make_pair(N1, 0);
 	array1_table[variableID].resize(N1);
 	for(int i = 0; i < N1; i++){
 		array1_table[variableID][i] = expressionNode->evaluate();
 	}
 }
 declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, int N1, int N2, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(N1), secondD(N2), expressionNode(expr_node) {
-	array2_table[variableID].resize(N1);
-	for(int i = 0; i < N1; i++){
-		array2_table[variableID][i].resize(N2);
-		for(int j = 0; j < N2; j++){
+	array_size[variableID] = std::make_pair(firstD, secondD);
+	array2_table[variableID].resize(firstD);
+	for(int i = 0; i < firstD; i++){
+		array2_table[variableID][i].resize(secondD);
+		for(int j = 0; j < secondD; j++){
 			array2_table[variableID][i][j] = expressionNode->evaluate();
 		}
 	}
@@ -834,14 +854,38 @@ void declaration_statement_node::print_evaluate(){
 }
 llvm::Value* declaration_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in declaration_statement_node" << std::endl;
-		if(!variable_table[variableID]){
-			variable_table[variableID] = createGlob(Builder, variableID);
-			// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
-			// variable_table[variableID]->setInitializer(const_int_val);
-			// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+		if(firstD && secondD){
+			// 2D Array
+			if(!variable_table[variableID]){
+				variable_table[variableID] = createGlob(Builder, variableID, firstD, secondD);
+				// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+				// variable_table[variableID]->setInitializer(const_int_val);
+				// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+			}
+			symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
+			return symbol_table[variableID];
 		}
-		symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
-		return symbol_table[variableID];
+		else if(firstD){
+			// 1D Array
+			if(!variable_table[variableID]){
+				variable_table[variableID] = createGlob(Builder, variableID, firstD);
+				// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+				// variable_table[variableID]->setInitializer(const_int_val);
+				// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+			}
+			symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
+			return symbol_table[variableID];
+		}
+		else{
+			if(!variable_table[variableID]){
+				variable_table[variableID] = createGlob(Builder, variableID);
+				// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+				// variable_table[variableID]->setInitializer(const_int_val);
+				// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+			}
+			symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
+			return symbol_table[variableID];
+		}
 }
 
 
@@ -955,17 +999,43 @@ void assignment_statement_node::print_evaluate(){
 }
 llvm::Value* assignment_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in assignment_statement_node" << std::endl;
-		if(!variable_table[variableID]){
-			variable_table[variableID] = createGlob(Builder, variableID);
-			// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
-			// variable_table[variableID]->setInitializer(const_int_val);
-			// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+		switch (dimNum) {
+			case 2:{
+				// 2D Array
+				if(!variable_table[variableID]){
+					variable_table[variableID] = createGlob(Builder, variableID, array_size[variableID].first, array_size[variableID].second);
+					// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+					// variable_table[variableID]->setInitializer(const_int_val);
+					// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+				}
+				symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), Builder.CreateGEP(variable_table[variableID], Builder.getInt32(firstI->evaluate().dataValue.valueInteger * array_size[variableID].first + secondI->evaluate().dataValue.valueInteger), "IDX"));
+				return symbol_table[variableID];
+			}
+			case 1:{
+				// 1D Array
+				if(!variable_table[variableID]){
+					variable_table[variableID] = createGlob(Builder, variableID, array_size[variableID].first);
+					// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+					// variable_table[variableID]->setInitializer(const_int_val);
+					// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+				}
+				symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), Builder.CreateGEP(variable_table[variableID], Builder.getInt32(firstI->evaluate().dataValue.valueInteger), "IDX"));
+				return symbol_table[variableID];
+			}
+			default:{
+				if(!variable_table[variableID]){
+					variable_table[variableID] = createGlob(Builder, variableID);
+					// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+					// variable_table[variableID]->setInitializer(const_int_val);
+					// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+				}
+				symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
+				if(loadVariable){
+					symbol_table[variableID] = Builder.CreateLoad(variable_table[variableID]);
+				}
+				return symbol_table[variableID];
+			}
 		}
-		symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
-		if(loadVariable){
-			symbol_table[variableID] = Builder.CreateLoad(variable_table[variableID]);
-		}
-		return symbol_table[variableID];
 }
 
 
