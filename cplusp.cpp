@@ -4,6 +4,7 @@ std::map<std::string, dtype> value_table;
 std::map<std::string, bool> id_table;
 std::map<std::string, llvm::Value*> symbol_table;
 std::map<std::string, llvm::GlobalVariable*> variable_table;
+llvm::Function *mainFunc;
 
 llvm::Function *createFunc(llvm::IRBuilder<> &Builder, std::string Name) {
 	std::vector<llvm::Type *> Integers(FuncArgs.size(), llvm::Type::getInt32Ty(Context));
@@ -33,15 +34,15 @@ llvm::GlobalVariable *createGlob(llvm::IRBuilder<> &Builder, std::string Name) {
 	return gVar;
 }
 
-llvm::Value* createArith(llvm::IRBuilder<> &Builder, std::string op, llvm::Value *L, llvm::Value *R, std::string storeNode){
-		 if(op == "+")return Builder.CreateAdd(L, R, storeNode);
-	else if(op == "-")return Builder.CreateSub(L, R, storeNode);
-	else if(op == "*")return Builder.CreateMul(L, R, storeNode);
-	// else if(op == "/")return Builder.CreateDiv(L, R, storeNode);
-	// else if(op == "%")return Builder.CreateRem(L, R, storeNode);
-	// else if(op == "-")return Builder.CreateSub(L, R, storeNode);
-	// else if(op == "-")return Builder.CreateSub(L, R, storeNode);
-	return Builder.CreateAdd(L, R, storeNode);
+llvm::Value* createArith(llvm::IRBuilder<> &Builder, std::string op, llvm::Value *L, llvm::Value *R){
+		 if(op == "+")return Builder.CreateAdd(L, R, "addtmp");
+	else if(op == "-")return Builder.CreateSub(L, R, "subtmp");
+	else if(op == "*")return Builder.CreateMul(L, R, "multmp");
+	// else if(op == "/")return Builder.CreateDiv(L, R, "addtmp");
+	// else if(op == "%")return Builder.CreateRem(L, R, "addtmp");
+	// else if(op == "-")return Builder.CreateSub(L, R, "addtmp");
+	// else if(op == "-")return Builder.CreateSub(L, R, "addtmp");
+	return Builder.CreateAdd(L, R, "addtmp");
 }
 
 llvm::Value *createIfElse(llvm::IRBuilder<> &Builder, BBList List, ValList VL) {
@@ -124,11 +125,11 @@ void operator_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* operator_node::generate(std::string storeNode){
+llvm::Value* operator_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in operator_node" << std::endl;
 		llvm::Value *L = leftNode->generate();
 		llvm::Value *R = rightNode->generate();
-		return createArith(Builder, operatorNode, L, R, storeNode);
+		return createArith(Builder, operatorNode, L, R);
 }
 
 
@@ -161,9 +162,10 @@ void unary_minus_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* unary_minus_node::generate(std::string storeNode){
+llvm::Value* unary_minus_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in unary_minus_node" << std::endl;
-		return Builder.getInt32(0);
+		llvm::Value *E = expNode->generate();
+		return Builder.CreateNeg(E, "negtmp");
 }
 
 
@@ -196,9 +198,10 @@ void unary_not_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* unary_not_node::generate(std::string storeNode){
+llvm::Value* unary_not_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in unary_not_node" << std::endl;
-		return Builder.getInt32(0);
+		llvm::Value *E = expNode->generate();
+		return Builder.CreateNot(E, "nottmp");
 }
 
 
@@ -231,9 +234,10 @@ void unary_complement_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* unary_complement_node::generate(std::string storeNode){
+llvm::Value* unary_complement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in unary_complement_node" << std::endl;
-		return Builder.getInt32(0);
+		llvm::Value *E = expNode->generate();
+		return Builder.CreateNot(E, "comptmp");
 }
 
 
@@ -284,9 +288,9 @@ void value_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* value_node::generate(std::string storeNode){
+llvm::Value* value_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in value_node" << std::endl;
-		return Builder.getInt32(dataNode.dataValue.valueInteger);
+		return dataNode.generate();
 }
 
 
@@ -319,7 +323,7 @@ void variable_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* variable_node::generate(std::string storeNode){
+llvm::Value* variable_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in variable_node" << std::endl;
 		if(!variable_table[variableID]){
 			variable_table[variableID] = createGlob(Builder, variableID);
@@ -377,17 +381,15 @@ void statement_list_node::print_evaluate(){
 	std::cout << terminatorChar;
 	return;
 }
-llvm::Value* statement_list_node::generate(std::string storeNode){
+llvm::Value* statement_list_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in statement_list_node" << std::endl;
-		storeNode == "" ? storeNode = "statementCount" : storeNode = storeNode;
 		std::list<statement_node *>::iterator stmtIt;
 		int statementCount = 0;
-		llvm::Value *temp;
 		for(stmtIt = statementList->begin(); stmtIt != statementList->end(); stmtIt++){
-			temp = (*stmtIt)->generate();
+			(*stmtIt)->generate();
 			statementCount++;
 		}
-		return temp; // Builder.CreateAdd(Builder.getInt32(statementCount), Builder.getInt32(0), storeNode);
+		return Builder.getInt32(statementCount);
 }
 
 
@@ -418,9 +420,9 @@ void expression_statement_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* expression_statement_node::generate(std::string storeNode){
+llvm::Value* expression_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in expression_statement_node" << std::endl;
-		return Builder.getInt32(0);
+		return expressionNode->generate();
 }
 
 
@@ -431,21 +433,21 @@ void expression_list_node::insert_expression(expression_node *stmt_node){
 	return;
 }
 void expression_list_node::print(){
-	std::list<expression_node *>::iterator stmtIt;
-	for(stmtIt = expressionList->begin(); stmtIt != expressionList->end(); stmtIt++){
+	std::list<expression_node *>::iterator exprIt;
+	for(exprIt = expressionList->begin(); exprIt != expressionList->end(); exprIt++){
 		std::cout << initiatorChar;
-		std::cout << "<# "; (*stmtIt)->print(); std::cout << " #>";
+		std::cout << "<# "; (*exprIt)->print(); std::cout << " #>";
 	}
 	std::cout << terminatorChar;
 	return;
 }
 void expression_list_node::evaluate(){
-	std::list<expression_node *>::iterator stmtIt;
-	for(stmtIt = expressionList->begin(); stmtIt != expressionList->end(); stmtIt++){
-		(*stmtIt)->evaluate();
+	std::list<expression_node *>::iterator exprIt;
+	for(exprIt = expressionList->begin(); exprIt != expressionList->end(); exprIt++){
+		(*exprIt)->evaluate();
 		if(printStatement){
 			std::cout << initiatorChar;
-			std::cout << "\t<$ expression_list_node: "; (*stmtIt)->print(); std::cout << " $>" << std::endl;
+			std::cout << "\t<$ expression_list_node: "; (*exprIt)->print(); std::cout << " $>" << std::endl;
 		}
 	}
 	return;
@@ -464,9 +466,15 @@ void expression_list_node::print_evaluate(){
 	std::cout << terminatorChar;
 	return;
 }
-llvm::Value* expression_list_node::generate(std::string storeNode){
+llvm::Value* expression_list_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in expression_list_node" << std::endl;
-		return Builder.getInt32(0);
+		std::list<expression_node *>::iterator exprIt;
+		int expressionCount = 0;
+		for(exprIt = expressionList->begin(); exprIt != expressionList->end(); exprIt++){
+			(*exprIt)->generate();
+			expressionCount++;
+		}
+		return Builder.getInt32(expressionCount);
 }
 
 
@@ -509,9 +517,30 @@ void tertiary_statement_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* tertiary_statement_node::generate(std::string storeNode){
+llvm::Value* tertiary_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in tertiary_statement_node" << std::endl;
-		return Builder.getInt32(0);
+		llvm::BasicBlock *TrueBB = createBB(mainFunc, "trueBlock");
+		llvm::BasicBlock *FalseBB = createBB(mainFunc, "falseBlock");
+		llvm::BasicBlock *MergeBB = createBB(mainFunc, "mergeBlock");
+		llvm::BasicBlock *entry = createBB(mainFunc, "entry");
+		llvm::Value *Condtn = Builder.CreateICmpNE(expressionNode->generate(), Builder.getInt32(0), "ifCond");
+		Builder.CreateCondBr(Condtn, TrueBB, FalseBB);
+		Builder.SetInsertPoint(TrueBB);
+		trueExpressionStatement->generate();
+		llvm::Value *TrueVal = Builder.getInt32(0);
+		Builder.CreateBr(MergeBB);
+		Builder.SetInsertPoint(FalseBB);
+		falseExpressionStatement->generate();
+		llvm::Value *FalseVal = Builder.getInt32(1);
+		Builder.CreateBr(MergeBB);
+		unsigned PhiBBSize = 2;
+		Builder.SetInsertPoint(MergeBB);
+		llvm::PHINode *Phi = Builder.CreatePHI(llvm::Type::getInt32Ty(Context), PhiBBSize, "tertBlock");
+		Phi->addIncoming(TrueVal, TrueBB);
+		Phi->addIncoming(FalseVal, FalseBB);
+		Builder.CreateBr(entry);
+		Builder.SetInsertPoint(entry);
+		return Phi;
 }
 
 
@@ -587,9 +616,37 @@ void if_statement_node::print_evaluate(){
 	std::cout << terminatorChar << std::endl;
 	return;
 }
-llvm::Value* if_statement_node::generate(std::string storeNode){
+llvm::Value* if_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in if_statement_node" << std::endl;
-		return Builder.getInt32(0);
+		std::list<expression_node *>::iterator expIt;
+		std::list<statement_list_node *>::iterator stmtIt;
+		int i, total = expressionList->size();
+		BBList expBB, stmtBB;
+		for(i = 0; i < total; i++){
+			expBB.push_back(createBB(mainFunc, "ifBlock"));
+			stmtBB.push_back(createBB(mainFunc, "stmtBlock"));
+		}
+		llvm::BasicBlock *MergeBB = createBB(mainFunc, "mergeBlock");
+		expBB.push_back(MergeBB);
+		llvm::BasicBlock *entry = createBB(mainFunc, "entry");
+		Builder.CreateBr(expBB[0]);
+		for(i = 0, expIt = expressionList->begin(), stmtIt = statementList->begin(); expIt != expressionList->end() && stmtIt != statementList->end(); expIt++, stmtIt++, i++){
+			Builder.SetInsertPoint(expBB[i]);
+			llvm::Value *Condtn = Builder.CreateICmpNE((*expIt)->generate(), Builder.getInt32(0), "");
+			Builder.CreateCondBr(Condtn, stmtBB[i], expBB[i+1]);
+			Builder.SetInsertPoint(stmtBB[i]);
+			(*stmtIt)->generate();
+			Builder.CreateBr(MergeBB);
+		}
+		Builder.SetInsertPoint(MergeBB);
+		unsigned PhiBBSize = statementList->size();
+		llvm::PHINode *Phi = Builder.CreatePHI(llvm::Type::getInt32Ty(Context), PhiBBSize, "ifCond");
+		for(i = 0; i < total; i++){
+			Phi->addIncoming(Builder.getInt32(i), stmtBB[i]);
+		}
+		Builder.CreateBr(entry);
+		Builder.SetInsertPoint(entry);
+		return Phi;
 }
 
 
@@ -639,9 +696,20 @@ void while_statement_node::print_evaluate(){
 	std::cout << terminatorChar << std::endl;
 	return;
 }
-llvm::Value* while_statement_node::generate(std::string storeNode){
+llvm::Value* while_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in while_statement_node" << std::endl;
-		return Builder.getInt32(0);
+		llvm::BasicBlock *LoopBB = createBB(mainFunc, "whileLoopBlock");
+		llvm::BasicBlock *AfterBB = createBB(mainFunc, "entry");
+		llvm::Value *count = Builder.getInt32(0);
+		llvm::Value *NextVal = Builder.CreateICmpNE(expressionNode->generate(true), Builder.getInt32(0), "whileLoopcond");
+		Builder.CreateCondBr(NextVal, LoopBB, AfterBB);
+		Builder.SetInsertPoint(LoopBB);
+		count = Builder.CreateAdd(count, Builder.getInt32(1));
+		statementList->generate();
+		NextVal = Builder.CreateICmpNE(expressionNode->generate(true), Builder.getInt32(0), "whileloopcond");
+		Builder.CreateCondBr(NextVal, LoopBB, AfterBB);
+		Builder.SetInsertPoint(AfterBB);
+		return count;
 }
 
 
@@ -696,9 +764,27 @@ void for_statement_node::print_evaluate(){
 	std::cout << terminatorChar << std::endl;
 	return;
 }
-llvm::Value* for_statement_node::generate(std::string storeNode){
+llvm::Value* for_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in for_statement_node" << std::endl;
-		return Builder.getInt32(0);
+		llvm::BasicBlock *PreheaderBB = Builder.GetInsertBlock();
+		llvm::BasicBlock *LoopBB = createBB(mainFunc, "forLoopBlock");
+		llvm::Value *count = Builder.getInt32(0);
+		llvm::Value *StartVal = initNode->generate(true);
+		Builder.CreateBr(LoopBB);
+		Builder.SetInsertPoint(LoopBB);
+		// Comment out the line having PHINode variable IndVar, as it is useless
+		llvm::PHINode *IndVar = Builder.CreatePHI(llvm::Type::getInt32Ty(Context), 2, "i");
+		IndVar->addIncoming(StartVal, PreheaderBB);
+		count = Builder.CreateAdd(count, Builder.getInt32(1));
+		statementList->generate();
+		llvm::Value *NextVal = modfNode->generate(true);
+		llvm::Value *EndCond = Builder.CreateICmpNE(termNode->generate(), Builder.getInt32(0), "forloopcond");
+		llvm::BasicBlock *LoopEndBB = Builder.GetInsertBlock();
+		llvm::BasicBlock *AfterBB = createBB(mainFunc, "entry");
+		Builder.CreateCondBr(EndCond, LoopBB, AfterBB);
+		Builder.SetInsertPoint(AfterBB);
+		IndVar->addIncoming(NextVal, LoopEndBB);
+		return count;
 }
 
 
@@ -729,9 +815,16 @@ void declaration_statement_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* declaration_statement_node::generate(std::string storeNode){
+llvm::Value* declaration_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in declaration_statement_node" << std::endl;
-		return Builder.getInt32(0);
+		if(!variable_table[variableID]){
+			variable_table[variableID] = createGlob(Builder, variableID);
+			// llvm::ConstantInt* const_int_val = llvm::ConstantInt::get(ModuleOb->getContext(), llvm::APInt(32,0));
+			// variable_table[variableID]->setInitializer(const_int_val);
+			// symbol_table[variableID] = variable_table[variableID]->getInitializer();
+		}
+		symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
+		return symbol_table[variableID];
 }
 
 
@@ -762,7 +855,7 @@ void assignment_statement_node::print_evaluate(){
 	}
 	return;
 }
-llvm::Value* assignment_statement_node::generate(std::string storeNode){
+llvm::Value* assignment_statement_node::generate(bool loadVariable){
 		// std::cout << "This is generator function in assignment_statement_node" << std::endl;
 		if(!variable_table[variableID]){
 			variable_table[variableID] = createGlob(Builder, variableID);
@@ -771,6 +864,9 @@ llvm::Value* assignment_statement_node::generate(std::string storeNode){
 			// symbol_table[variableID] = variable_table[variableID]->getInitializer();
 		}
 		symbol_table[variableID] = Builder.CreateStore(expressionNode->generate(), variable_table[variableID]);
+		if(loadVariable){
+			symbol_table[variableID] = Builder.CreateLoad(variable_table[variableID]);
+		}
 		return symbol_table[variableID];
 }
 
@@ -789,17 +885,17 @@ void program_node::evaluate(){
 	}
 	return;
 }
-void program_node::generate(std::string storeNode){
+void program_node::generate(bool loadVariable){
 		std::cout << "================================================GENERATE========================================================================" << std::endl;
 		// std::cout << "This is generator function in program_node" << std::endl;
 		// FuncArgs.push_back("a");
 		// FuncArgs.push_back("b");
 		// FuncArgs.push_back("c");
-		llvm::Function *mainFunc = createFunc(Builder, "main");
+		mainFunc = createFunc(Builder, "main");
 		setFuncArgs(mainFunc, FuncArgs);
-		llvm::BasicBlock *entry = createBB(mainFunc, "entry");
+		llvm::BasicBlock *entry = createBB(mainFunc, "program_node");
 		Builder.SetInsertPoint(entry);
-		statementList->generate("statementCount");
+		statementList->generate();
 		Builder.CreateRet(Builder.getInt32(0));
 		verifyFunction(*mainFunc);
 		// llvm::Module::dump() const is depricated, so use the below print functions

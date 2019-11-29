@@ -131,6 +131,13 @@ struct MYDATA {
 	    else if(dataType == "TYPE_FLOAT") return (dataValue.valueFloat ? true : false);
 	    return false;
 	}
+	llvm::Value* generate(bool loadVariable = false){
+			 if(dataType == "TYPE_BOOL") return Builder.getInt32(dataValue.valueBool);
+	    else if(dataType == "TYPE_CHAR") return Builder.getInt32(dataValue.valueChar);
+		else if(dataType == "TYPE_INT") return Builder.getInt32(dataValue.valueInteger);
+	    else if(dataType == "TYPE_FLOAT") return Builder.getInt32(dataValue.valueFloat);
+		return Builder.getInt32(0);
+	}
 	struct MYDATA operate(std::string op, struct MYDATA s2){
 		if(data_groups[dataType].first != data_groups[s2.dataType].first){
 		    return MYDATA();
@@ -280,7 +287,7 @@ public:
 	virtual void print(){std::cout << " "; return;}
 	virtual dtype evaluate(){return dtype();}
 	virtual void print_evaluate(){std::cout << " "; return;};
-	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
+	virtual llvm::Value* generate(bool loadVariable = false){return Builder.getInt32(0);};
 };
 
 class unary_minus_node : public expression_node {
@@ -299,7 +306,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class unary_not_node : public expression_node {
@@ -318,7 +325,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class unary_complement_node : public expression_node {
@@ -337,7 +344,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class operator_node : public expression_node {
@@ -358,7 +365,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class value_node : public expression_node {
@@ -379,7 +386,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class variable_node : public expression_node {
@@ -398,7 +405,7 @@ public:
 	void print();
 	dtype evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class statement_node{
@@ -414,7 +421,7 @@ public:
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
 	virtual void print_evaluate() = 0;
-	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
+	virtual llvm::Value* generate(bool loadVariable = false){return Builder.getInt32(0);};
 };
 
 class statement_list_node : public statement_node {
@@ -434,7 +441,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class expression_list_node : public statement_node {
@@ -454,7 +461,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class expression_statement_node : public statement_node {
@@ -473,7 +480,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class control_statement_node : public statement_node {
@@ -489,7 +496,7 @@ public:
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
 	virtual void print_evaluate() = 0;
-	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
+	virtual llvm::Value* generate(bool loadVariable = false){return Builder.getInt32(0);};
 };
 
 class tertiary_statement_node : public control_statement_node {
@@ -511,7 +518,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class if_statement_node : public control_statement_node {
@@ -533,7 +540,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class loop_statement_node : public statement_node {
@@ -549,7 +556,7 @@ public:
 	virtual void print() = 0;
 	virtual void evaluate() = 0;
 	virtual void print_evaluate() = 0;
-	virtual llvm::Value* generate(std::string storeNode = ""){return Builder.getInt32(0);};
+	virtual llvm::Value* generate(bool loadVariable = false){return Builder.getInt32(0);};
 };
 
 class while_statement_node : public loop_statement_node {
@@ -569,7 +576,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class for_statement_node : public loop_statement_node {
@@ -591,7 +598,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class declaration_statement_node : public statement_node {
@@ -612,7 +619,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class assignment_statement_node : public statement_node {
@@ -632,7 +639,7 @@ public:
 	void print();
 	void evaluate();
 	void print_evaluate();
-	llvm::Value* generate(std::string storeNode = "");
+	llvm::Value* generate(bool loadVariable = false);
 };
 
 class program_node{
@@ -645,7 +652,7 @@ public:
 	program_node(statement_list_node *stmt_list, bool print = false, std::string term = "", std::string init = "");
 	void evaluate();
 	void print_evaluate();
-	void generate(std::string storeNode = "");
+	void generate(bool loadVariable = false);
 };
 
 extern program_node *root;

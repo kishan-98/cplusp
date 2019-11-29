@@ -187,7 +187,7 @@ program:                    statement_list { $$ = new program_node($1, true, "\n
 tertiary_statement:         '(' expression ')' '?' statement ':' statement {std::cout << line_number << ": Tertiary Statement" << std::endl; $$ = new tertiary_statement_node($2, $5, $7); }
                         ;
 
-control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {std::cout << line_number << ": If Statement" << std::endl; $8->insert_condition(" IF ", $3, $6); $8->print(); $$ = $8; }
+control_statement:          IF '(' expression ')' '{' statement_list '}' else_statement {std::cout << line_number << ": If Statement" << std::endl; $8->insert_condition(" IF ", $3, $6); /*$8->print();*/ $$ = $8; }
                         ;
 
 else_statement:                 ELSE '{' statement_list '}' {std::cout << line_number << ": Else Statement" << std::endl; $$ = new if_statement_node(new std::list<string>(1, "ELSE"), new std::list<expression_node*>(1, new value_node(true)), new std::list<statement_list_node*>(1, $3)); }
