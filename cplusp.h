@@ -631,7 +631,8 @@ protected:
 	std::string terminatorChar;
 	bool printStatement;
 	std::string variableID;
-	expression_node* firstI, secondI;
+	int dimNum;
+	expression_node *firstI, *secondI;
 	expression_node *expressionNode;
 public:
 	assignment_statement_node(std::string id, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");

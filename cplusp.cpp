@@ -793,8 +793,19 @@ llvm::Value* for_statement_node::generate(bool loadVariable){
 declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(0), secondD(0), expressionNode(expr_node) {
 }
 declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, int N1, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(N1), secondD(0), expressionNode(expr_node) {
+	array1_table[variableID].resize(N1);
+	for(int i = 0; i < N1; i++){
+		array1_table[variableID][i] = expressionNode->evaluate();
+	}
 }
 declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, int N1, int N2, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(N1), secondD(N2), expressionNode(expr_node) {
+	array2_table[variableID].resize(N1);
+	for(int i = 0; i < N1; i++){
+		array2_table[variableID][i].resize(N2);
+		for(int j = 0; j < N2; j++){
+			array2_table[variableID][i][j] = expressionNode->evaluate();
+		}
+	}
 }
 void declaration_statement_node::print(){
 	std::cout << initiatorChar;
@@ -834,34 +845,111 @@ llvm::Value* declaration_statement_node::generate(bool loadVariable){
 }
 
 
-assignment_statement_node::assignment_statement_node(std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(nullptr), secondI(nullptr), expressionNode(expr_node) {
+assignment_statement_node::assignment_statement_node(std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), expressionNode(expr_node) {
+	dimNum = 0;
+	// firstI = secondI = nullptr;
 }
-assignment_statement_node::assignment_statement_node(std::string id, expression_node *first_index, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(first_index), secondI(nullptr), expressionNode(expr_node) {
+assignment_statement_node::assignment_statement_node(std::string id, expression_node *first_index, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(first_index), expressionNode(expr_node) {
+	dimNum = 1;
+	// secondI = nullptr;
 }
 assignment_statement_node::assignment_statement_node(std::string id, expression_node *first_index, expression_node *second_index, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(first_index), secondI(second_index), expressionNode(expr_node) {
+	dimNum = 2;
 }
 void assignment_statement_node::print(){
 	std::cout << initiatorChar;
-	std::cout << "<# " << variableID << " = "; expressionNode->print(); std::cout << " #>";
+	switch (dimNum) {
+		case 2:{
+			std::cout << "<# " << variableID << "["; firstI->print(); std::cout << "]["; secondI->print(); std::cout << "] = "; expressionNode->print(); std::cout << " #>";
+			break;
+		}
+		case 1:{
+			std::cout << "<# " << variableID << "["; firstI->print(); std::cout << "] = "; expressionNode->print(); std::cout << " #>";
+			break;
+		}
+		default:{
+			std::cout << "<# " << variableID << " = "; expressionNode->print(); std::cout << " #>";
+		}
+	}
 	std::cout << terminatorChar;
 	return;
 }
 void assignment_statement_node::evaluate(){
-	value_table[variableID] = expressionNode->evaluate();
+	switch (dimNum) {
+		case 2:{
+			array2_table[variableID][firstI->evaluate().dataValue.valueInteger][secondI->evaluate().dataValue.valueInteger] = expressionNode->evaluate();
+			break;
+		}
+		case 1:{
+			array1_table[variableID][firstI->evaluate().dataValue.valueInteger] = expressionNode->evaluate();
+			break;
+		}
+		default:{
+			value_table[variableID] = expressionNode->evaluate();
+		}
+	}
 	if(printStatement){
 		std::cout << initiatorChar;
-		std::cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); std::cout << " $>" << std::endl;
+		switch (dimNum) {
+			case 2:{
+				std::cout << "\t<$ assignment_statement_node: " << variableID << "["; firstI->evaluate().print(); std::cout << "]["; secondI->evaluate().print(); std::cout << "]" << " = "; array2_table[variableID][firstI->evaluate().dataValue.valueInteger][secondI->evaluate().dataValue.valueInteger].print(); std::cout << " $>" << std::endl;
+				break;
+			}
+			case 1:{
+				std::cout << "\t<$ assignment_statement_node: " << variableID << "["; firstI->evaluate().print(); std::cout << "]" << " = "; array1_table[variableID][firstI->evaluate().dataValue.valueInteger].print(); std::cout << " $>" << std::endl;
+				break;
+			}
+			default:{
+				std::cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); std::cout << " $>" << std::endl;
+			}
+		}
 	}
 	return;
 }
 void assignment_statement_node::print_evaluate(){
 	std::cout << initiatorChar;
-	std::cout << "<# " << variableID << " = "; expressionNode->print(); std::cout << " #>";
+	switch (dimNum) {
+		case 2:{
+			std::cout << "<# " << variableID << "["; firstI->print(); std::cout << "]["; secondI->print(); std::cout << "] = "; expressionNode->print(); std::cout << " #>";
+			break;
+		}
+		case 1:{
+			std::cout << "<# " << variableID << "["; firstI->print(); std::cout << "] = "; expressionNode->print(); std::cout << " #>";
+			break;
+		}
+		default:{
+			std::cout << "<# " << variableID << " = "; expressionNode->print(); std::cout << " #>";
+		}
+	}
 	std::cout << terminatorChar;
-	value_table[variableID] = expressionNode->evaluate();
+	switch (dimNum) {
+		case 2:{
+			array2_table[variableID][firstI->evaluate().dataValue.valueInteger][secondI->evaluate().dataValue.valueInteger] = expressionNode->evaluate();
+			break;
+		}
+		case 1:{
+			array1_table[variableID][firstI->evaluate().dataValue.valueInteger] = expressionNode->evaluate();
+			break;
+		}
+		default:{
+			value_table[variableID] = expressionNode->evaluate();
+		}
+	}
 	if(printStatement){
 		std::cout << initiatorChar;
-		std::cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); std::cout << " $>" << std::endl;
+		switch (dimNum) {
+			case 2:{
+				std::cout << "\t<$ assignment_statement_node: " << variableID << "["; firstI->evaluate().print(); std::cout << "]["; secondI->evaluate().print(); std::cout << "]" << " = "; array2_table[variableID][firstI->evaluate().dataValue.valueInteger][secondI->evaluate().dataValue.valueInteger].print(); std::cout << " $>" << std::endl;
+				break;
+			}
+			case 1:{
+				std::cout << "\t<$ assignment_statement_node: " << variableID << "["; firstI->evaluate().print(); std::cout << "]" << " = "; array1_table[variableID][firstI->evaluate().dataValue.valueInteger].print(); std::cout << " $>" << std::endl;
+				break;
+			}
+			default:{
+				std::cout << "\t<$ assignment_statement_node: " << variableID << " = "; value_table[variableID].print(); std::cout << " $>" << std::endl;
+			}
+		}
 	}
 	return;
 }

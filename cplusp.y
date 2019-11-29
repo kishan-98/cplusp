@@ -156,7 +156,8 @@ value:                      INT { $$ = new value_node($1); }
                         ;
 assignment_statement:       VARIABLE ASSIGNMENT expression {std::cout << line_number << ": Assignment statement" << std::endl; $$ = new assignment_statement_node($1, $3); } ;
                         /* |   VARIABLE ASSIGNMENT expression ',' assignment_statement {std::cout << line_number << ": Assignment statement" << std::endl; $$ = new assignment_statement_node($1, $3); } ; */
-                        |   VARIABLE '[' expression ']' ASSIGNMENT expression {std::cout << line_number << ": Array Assignment statement" << std::endl; free($1);}
+                        |   VARIABLE '[' expression ']' ASSIGNMENT expression {std::cout << line_number << ": Array Assignment statement" << std::endl; $$ = new assignment_statement_node($1, $3, $6); }
+                        |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT expression {std::cout << line_number << ": Array Assignment statement" << std::endl; $$ = new assignment_statement_node($1, $3, $6, $9); }
                         ;
                         /* |   VARIABLE '[' expression ']' ASSIGNMENT '{' expression '}' ',' assignment_statement {std::cout << line_number << ": Array declaration with definition" << std::endl; free($1);}
                         |   VARIABLE '[' expression ']' '[' expression ']' ASSIGNMENT '{' expression '}' ',' assignment_statement {std::cout << line_number << ": Matrix declaration with definition" << std::endl; free($1);}
@@ -164,8 +165,10 @@ assignment_statement:       VARIABLE ASSIGNMENT expression {std::cout << line_nu
 
 declaration_statement:      data_type VARIABLE ASSIGNMENT expression {std::cout << line_number << ": Declaration statement with assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4); }
                         |   data_type VARIABLE {std::cout << line_number << ": Declaration statement without assignment" << std::endl; $$ = new declaration_statement_node($1, $2, new expression_node()); }
-                        |   data_type VARIABLE '[' INT ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Declaration statement with assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4, $8); }
-                        |   data_type VARIABLE '[' INT ']' {std::cout << line_number << ": Declaration statement without assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4, new expression_node()); }
+                        |   data_type VARIABLE '[' INT ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Array1 Declaration statement with assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4, $8); }
+                        |   data_type VARIABLE '[' INT ']' {std::cout << line_number << ": Array1 Declaration statement without assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4, new expression_node()); }
+                        |   data_type VARIABLE '[' INT ']' '[' INT ']' ASSIGNMENT '{' expression '}' {std::cout << line_number << ": Array2 Declaration statement with assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4, $7, $11); }
+                        |   data_type VARIABLE '[' INT ']' '[' INT ']' {std::cout << line_number << ": Array2 Declaration statement without assignment" << std::endl; $$ = new declaration_statement_node($1, $2, $4, $7, new expression_node()); }
                         ;
 
 program:                    statement_list { $$ = new program_node($1, true, "\n"); root = $$; }
