@@ -5,8 +5,6 @@ Terminals unused in grammar
    BREAK
    STRING
    INVALID
-   '['
-   ']'
 
 
 Grammar
@@ -40,99 +38,102 @@ Grammar
    21      | BOOL
 
    22 assignment_statement: VARIABLE ASSIGNMENT expression
+   23                     | VARIABLE '[' expression ']' ASSIGNMENT expression
 
-   23 declaration_statement: data_type VARIABLE ASSIGNMENT expression
-   24                      | data_type VARIABLE
+   24 declaration_statement: data_type VARIABLE ASSIGNMENT expression
+   25                      | data_type VARIABLE
+   26                      | data_type VARIABLE '[' INT ']' ASSIGNMENT '{' expression '}'
+   27                      | data_type VARIABLE '[' INT ']'
 
-   25 program: statement_list
-   26        | %empty
+   28 program: statement_list
+   29        | %empty
 
-   27 tertiary_statement: '(' expression ')' '?' statement ':' statement
+   30 tertiary_statement: '(' expression ')' '?' statement ':' statement
 
-   28 control_statement: IF '(' expression ')' '{' statement_list '}' else_statement
+   31 control_statement: IF '(' expression ')' '{' statement_list '}' else_statement
 
-   29 else_statement: ELSE '{' statement_list '}'
-   30               | ELIF '(' expression ')' '{' statement_list '}' else_statement
-   31               | %empty
+   32 else_statement: ELSE '{' statement_list '}'
+   33               | ELIF '(' expression ')' '{' statement_list '}' else_statement
+   34               | %empty
 
-   32 loops: WHILE '(' expression ')' '{' statement_list '}'
-   33      | FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}'
+   35 loops: WHILE '(' expression ')' '{' statement_list '}'
+   36      | FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}'
 
-   34 expression: expression LOGOR expression
-   35           | expression LOGAND expression
-   36           | expression '|' expression
-   37           | expression '^' expression
-   38           | expression '&' expression
-   39           | expression EQ expression
-   40           | expression NE expression
-   41           | expression GT expression
-   42           | expression GE expression
-   43           | expression LT expression
-   44           | expression LE expression
-   45           | expression LSHIFT expression
-   46           | expression RSHIFT expression
-   47           | expression '+' expression
-   48           | expression '-' expression
-   49           | expression '*' expression
-   50           | expression '/' expression
-   51           | expression '%' expression
-   52           | '(' expression ')'
-   53           | '-' expression
-   54           | '!' expression
-   55           | '~' expression
-   56           | VARIABLE
-   57           | value
+   37 expression: expression LOGOR expression
+   38           | expression LOGAND expression
+   39           | expression '|' expression
+   40           | expression '^' expression
+   41           | expression '&' expression
+   42           | expression EQ expression
+   43           | expression NE expression
+   44           | expression GT expression
+   45           | expression GE expression
+   46           | expression LT expression
+   47           | expression LE expression
+   48           | expression LSHIFT expression
+   49           | expression RSHIFT expression
+   50           | expression '+' expression
+   51           | expression '-' expression
+   52           | expression '*' expression
+   53           | expression '/' expression
+   54           | expression '%' expression
+   55           | '(' expression ')'
+   56           | '-' expression
+   57           | '!' expression
+   58           | '~' expression
+   59           | VARIABLE
+   60           | value
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'!' (33) 54
-'%' (37) 51
-'&' (38) 38
-'(' (40) 27 28 30 32 52
-')' (41) 27 28 30 32 52
-'*' (42) 49
-'+' (43) 47
-',' (44) 33
-'-' (45) 48 53
-'/' (47) 50
-':' (58) 27
-'?' (63) 27
-'[' (91)
-']' (93)
-'^' (94) 37
-'{' (123) 28 29 30 32 33
-'|' (124) 36
-'}' (125) 28 29 30 32 33
-'~' (126) 55
+'!' (33) 57
+'%' (37) 54
+'&' (38) 41
+'(' (40) 30 31 33 35 55
+')' (41) 30 31 33 35 55
+'*' (42) 52
+'+' (43) 50
+',' (44) 36
+'-' (45) 51 56
+'/' (47) 53
+':' (58) 30
+'?' (63) 30
+'[' (91) 23 26 27
+']' (93) 23 26 27
+'^' (94) 40
+'{' (123) 26 31 32 33 35 36
+'|' (124) 39
+'}' (125) 26 31 32 33 35 36
+'~' (126) 58
 error (256) 3
 TYPE_VOID (258)
-ASSIGNMENT (259) 22 23
-LSHIFT (260) 45
-RSHIFT (261) 46
-LT (262) 43
-GT (263) 41
-EQ (264) 39
-NE (265) 40
-LE (266) 44
-GE (267) 42
-LOGAND (268) 35
-LOGOR (269) 34
+ASSIGNMENT (259) 22 23 24 26
+LSHIFT (260) 48
+RSHIFT (261) 49
+LT (262) 46
+GT (263) 44
+EQ (264) 42
+NE (265) 43
+LE (266) 47
+GE (267) 45
+LOGAND (268) 38
+LOGOR (269) 37
 TERMINATOR (270) 4 5 6 9
-IF (271) 28
-ELIF (272) 30
-ELSE (273) 29
-FOR (274) 33
-WHILE (275) 32
+IF (271) 31
+ELIF (272) 33
+ELSE (273) 32
+FOR (274) 36
+WHILE (275) 35
 RETURN (276)
 BREAK (277)
-INT (278) 18
+INT (278) 18 26 27
 FLOAT (279) 19
 CHAR (280) 20
 BOOL (281) 21
 STRING (282)
-VARIABLE (283) 22 23 24 56
+VARIABLE (283) 22 23 24 25 26 27 59
 INVALID (284)
 TYPE_INT (285) 13
 TYPE_FLOAT (286) 14
@@ -147,33 +148,33 @@ Nonterminals, with rules where they appear
 $accept (55)
     on left: 0
 statement_list (56)
-    on left: 1 2 3, on right: 1 3 25 28 29 30 32 33
+    on left: 1 2 3, on right: 1 3 28 31 32 33 35 36
 statement_block (57)
     on left: 4 5 6 7 8 9, on right: 1 2
 statement (58)
-    on left: 10 11 12, on right: 27
+    on left: 10 11 12, on right: 30
 data_type (59)
-    on left: 13 14 15 16 17, on right: 23 24
+    on left: 13 14 15 16 17, on right: 24 25 26 27
 value (60)
-    on left: 18 19 20 21, on right: 57
+    on left: 18 19 20 21, on right: 60
 assignment_statement (61)
-    on left: 22, on right: 4 10 33
+    on left: 22 23, on right: 4 10 36
 declaration_statement (62)
-    on left: 23 24, on right: 5
+    on left: 24 25 26 27, on right: 5
 program (63)
-    on left: 25 26, on right: 0
+    on left: 28 29, on right: 0
 tertiary_statement (64)
-    on left: 27, on right: 6
+    on left: 30, on right: 6
 control_statement (65)
-    on left: 28, on right: 7 11
+    on left: 31, on right: 7 11
 else_statement (66)
-    on left: 29 30 31, on right: 28 30
+    on left: 32 33 34, on right: 31 33
 loops (67)
-    on left: 32 33, on right: 8
+    on left: 35 36, on right: 8
 expression (68)
-    on left: 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51
-    52 53 54 55 56 57, on right: 9 12 22 23 27 28 30 32 33 34 35 36
-    37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55
+    on left: 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54
+    55 56 57 58 59 60, on right: 9 12 22 23 24 26 30 31 33 35 36 37
+    38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58
 
 
 State 0
@@ -198,7 +199,7 @@ State 0
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
 
-    $default  reduce using rule 26 (program)
+    $default  reduce using rule 29 (program)
 
     statement_list         go to state 18
     statement_block        go to state 19
@@ -215,14 +216,14 @@ State 0
 
 State 1
 
-   28 control_statement: IF . '(' expression ')' '{' statement_list '}' else_statement
+   31 control_statement: IF . '(' expression ')' '{' statement_list '}' else_statement
 
     '('  shift, and go to state 29
 
 
 State 2
 
-   33 loops: FOR . assignment_statement ',' expression ',' assignment_statement '{' statement_list '}'
+   36 loops: FOR . assignment_statement ',' expression ',' assignment_statement '{' statement_list '}'
 
     VARIABLE  shift, and go to state 30
 
@@ -231,7 +232,7 @@ State 2
 
 State 3
 
-   32 loops: WHILE . '(' expression ')' '{' statement_list '}'
+   35 loops: WHILE . '(' expression ')' '{' statement_list '}'
 
     '('  shift, and go to state 32
 
@@ -267,11 +268,13 @@ State 7
 State 8
 
    22 assignment_statement: VARIABLE . ASSIGNMENT expression
-   56 expression: VARIABLE .
+   23                     | VARIABLE . '[' expression ']' ASSIGNMENT expression
+   59 expression: VARIABLE .
 
     ASSIGNMENT  shift, and go to state 33
+    '['         shift, and go to state 34
 
-    $default  reduce using rule 56 (expression)
+    $default  reduce using rule 59 (expression)
 
 
 State 9
@@ -311,84 +314,84 @@ State 13
 
 State 14
 
-   53 expression: '-' . expression
+   56 expression: '-' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 36
-
-
-State 15
-
-   54 expression: '!' . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 37
 
 
-State 16
+State 15
 
-   55 expression: '~' . expression
+   57 expression: '!' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 38
 
 
-State 17
+State 16
 
-   27 tertiary_statement: '(' . expression ')' '?' statement ':' statement
-   52 expression: '(' . expression ')'
+   58 expression: '~' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 39
+
+
+State 17
+
+   30 tertiary_statement: '(' . expression ')' '?' statement ':' statement
+   55 expression: '(' . expression ')'
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 40
 
 
 State 18
 
     1 statement_list: statement_list . statement_block
     3               | statement_list . error
-   25 program: statement_list .
+   28 program: statement_list .
 
-    error       shift, and go to state 40
+    error       shift, and go to state 41
     IF          shift, and go to state 1
     FOR         shift, and go to state 2
     WHILE       shift, and go to state 3
@@ -407,9 +410,9 @@ State 18
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
 
-    $end  reduce using rule 25 (program)
+    $end  reduce using rule 28 (program)
 
-    statement_block        go to state 41
+    statement_block        go to state 42
     data_type              go to state 20
     value                  go to state 21
     assignment_statement   go to state 22
@@ -429,45 +432,47 @@ State 19
 
 State 20
 
-   23 declaration_statement: data_type . VARIABLE ASSIGNMENT expression
-   24                      | data_type . VARIABLE
+   24 declaration_statement: data_type . VARIABLE ASSIGNMENT expression
+   25                      | data_type . VARIABLE
+   26                      | data_type . VARIABLE '[' INT ']' ASSIGNMENT '{' expression '}'
+   27                      | data_type . VARIABLE '[' INT ']'
 
-    VARIABLE  shift, and go to state 42
+    VARIABLE  shift, and go to state 43
 
 
 State 21
 
-   57 expression: value .
+   60 expression: value .
 
-    $default  reduce using rule 57 (expression)
+    $default  reduce using rule 60 (expression)
 
 
 State 22
 
     4 statement_block: assignment_statement . TERMINATOR
 
-    TERMINATOR  shift, and go to state 43
+    TERMINATOR  shift, and go to state 44
 
 
 State 23
 
     5 statement_block: declaration_statement . TERMINATOR
 
-    TERMINATOR  shift, and go to state 44
+    TERMINATOR  shift, and go to state 45
 
 
 State 24
 
     0 $accept: program . $end
 
-    $end  shift, and go to state 45
+    $end  shift, and go to state 46
 
 
 State 25
 
     6 statement_block: tertiary_statement . TERMINATOR
 
-    TERMINATOR  shift, and go to state 46
+    TERMINATOR  shift, and go to state 47
 
 
 State 26
@@ -487,94 +492,96 @@ State 27
 State 28
 
     9 statement_block: expression . TERMINATOR
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT      shift, and go to state 47
-    RSHIFT      shift, and go to state 48
-    LT          shift, and go to state 49
-    GT          shift, and go to state 50
-    EQ          shift, and go to state 51
-    NE          shift, and go to state 52
-    LE          shift, and go to state 53
-    GE          shift, and go to state 54
-    LOGAND      shift, and go to state 55
-    LOGOR       shift, and go to state 56
-    TERMINATOR  shift, and go to state 57
-    '|'         shift, and go to state 58
-    '^'         shift, and go to state 59
-    '&'         shift, and go to state 60
-    '+'         shift, and go to state 61
-    '-'         shift, and go to state 62
-    '*'         shift, and go to state 63
-    '/'         shift, and go to state 64
-    '%'         shift, and go to state 65
+    LSHIFT      shift, and go to state 48
+    RSHIFT      shift, and go to state 49
+    LT          shift, and go to state 50
+    GT          shift, and go to state 51
+    EQ          shift, and go to state 52
+    NE          shift, and go to state 53
+    LE          shift, and go to state 54
+    GE          shift, and go to state 55
+    LOGAND      shift, and go to state 56
+    LOGOR       shift, and go to state 57
+    TERMINATOR  shift, and go to state 58
+    '|'         shift, and go to state 59
+    '^'         shift, and go to state 60
+    '&'         shift, and go to state 61
+    '+'         shift, and go to state 62
+    '-'         shift, and go to state 63
+    '*'         shift, and go to state 64
+    '/'         shift, and go to state 65
+    '%'         shift, and go to state 66
 
 
 State 29
 
-   28 control_statement: IF '(' . expression ')' '{' statement_list '}' else_statement
+   31 control_statement: IF '(' . expression ')' '{' statement_list '}' else_statement
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
-    expression  go to state 66
+    expression  go to state 67
 
 
 State 30
 
    22 assignment_statement: VARIABLE . ASSIGNMENT expression
+   23                     | VARIABLE . '[' expression ']' ASSIGNMENT expression
 
     ASSIGNMENT  shift, and go to state 33
+    '['         shift, and go to state 34
 
 
 State 31
 
-   33 loops: FOR assignment_statement . ',' expression ',' assignment_statement '{' statement_list '}'
+   36 loops: FOR assignment_statement . ',' expression ',' assignment_statement '{' statement_list '}'
 
-    ','  shift, and go to state 67
+    ','  shift, and go to state 68
 
 
 State 32
 
-   32 loops: WHILE '(' . expression ')' '{' statement_list '}'
+   35 loops: WHILE '(' . expression ')' '{' statement_list '}'
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
-    expression  go to state 68
+    expression  go to state 69
 
 
 State 33
@@ -585,1435 +592,1514 @@ State 33
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 69
-
-
-State 34
-
-   56 expression: VARIABLE .
-
-    $default  reduce using rule 56 (expression)
-
-
-State 35
-
-   52 expression: '(' . expression ')'
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 70
 
 
+State 34
+
+   23 assignment_statement: VARIABLE '[' . expression ']' ASSIGNMENT expression
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 71
+
+
+State 35
+
+   59 expression: VARIABLE .
+
+    $default  reduce using rule 59 (expression)
+
+
 State 36
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-   53           | '-' expression .
+   55 expression: '(' . expression ')'
 
-    $default  reduce using rule 53 (expression)
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 72
 
 
 State 37
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-   54           | '!' expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+   56           | '-' expression .
 
-    $default  reduce using rule 54 (expression)
+    $default  reduce using rule 56 (expression)
 
 
 State 38
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-   55           | '~' expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+   57           | '!' expression .
 
-    $default  reduce using rule 55 (expression)
+    $default  reduce using rule 57 (expression)
 
 
 State 39
 
-   27 tertiary_statement: '(' expression . ')' '?' statement ':' statement
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-   52           | '(' expression . ')'
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+   58           | '~' expression .
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-    ')'     shift, and go to state 71
+    $default  reduce using rule 58 (expression)
 
 
 State 40
+
+   30 tertiary_statement: '(' expression . ')' '?' statement ':' statement
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+   55           | '(' expression . ')'
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ')'     shift, and go to state 73
+
+
+State 41
 
     3 statement_list: statement_list error .
 
     $default  reduce using rule 3 (statement_list)
 
 
-State 41
+State 42
 
     1 statement_list: statement_list statement_block .
 
     $default  reduce using rule 1 (statement_list)
 
 
-State 42
-
-   23 declaration_statement: data_type VARIABLE . ASSIGNMENT expression
-   24                      | data_type VARIABLE .
-
-    ASSIGNMENT  shift, and go to state 72
-
-    $default  reduce using rule 24 (declaration_statement)
-
-
 State 43
+
+   24 declaration_statement: data_type VARIABLE . ASSIGNMENT expression
+   25                      | data_type VARIABLE .
+   26                      | data_type VARIABLE . '[' INT ']' ASSIGNMENT '{' expression '}'
+   27                      | data_type VARIABLE . '[' INT ']'
+
+    ASSIGNMENT  shift, and go to state 74
+    '['         shift, and go to state 75
+
+    $default  reduce using rule 25 (declaration_statement)
+
+
+State 44
 
     4 statement_block: assignment_statement TERMINATOR .
 
     $default  reduce using rule 4 (statement_block)
 
 
-State 44
+State 45
 
     5 statement_block: declaration_statement TERMINATOR .
 
     $default  reduce using rule 5 (statement_block)
 
 
-State 45
+State 46
 
     0 $accept: program $end .
 
     $default  accept
 
 
-State 46
+State 47
 
     6 statement_block: tertiary_statement TERMINATOR .
 
     $default  reduce using rule 6 (statement_block)
 
 
-State 47
-
-   45 expression: expression LSHIFT . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 73
-
-
 State 48
 
-   46 expression: expression RSHIFT . expression
+   48 expression: expression LSHIFT . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 74
-
-
-State 49
-
-   43 expression: expression LT . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 75
-
-
-State 50
-
-   41 expression: expression GT . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 76
 
 
-State 51
+State 49
 
-   39 expression: expression EQ . expression
+   49 expression: expression RSHIFT . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 77
 
 
-State 52
+State 50
 
-   40 expression: expression NE . expression
+   46 expression: expression LT . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 78
 
 
-State 53
+State 51
 
-   44 expression: expression LE . expression
+   44 expression: expression GT . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 79
 
 
-State 54
+State 52
 
-   42 expression: expression GE . expression
+   42 expression: expression EQ . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 80
 
 
-State 55
+State 53
 
-   35 expression: expression LOGAND . expression
+   43 expression: expression NE . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 81
 
 
-State 56
+State 54
 
-   34 expression: expression LOGOR . expression
+   47 expression: expression LE . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 82
 
 
+State 55
+
+   45 expression: expression GE . expression
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 83
+
+
+State 56
+
+   38 expression: expression LOGAND . expression
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 84
+
+
 State 57
+
+   37 expression: expression LOGOR . expression
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 85
+
+
+State 58
 
     9 statement_block: expression TERMINATOR .
 
     $default  reduce using rule 9 (statement_block)
 
 
-State 58
-
-   36 expression: expression '|' . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 83
-
-
 State 59
 
-   37 expression: expression '^' . expression
+   39 expression: expression '|' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 84
-
-
-State 60
-
-   38 expression: expression '&' . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
-
-    value       go to state 21
-    expression  go to state 85
-
-
-State 61
-
-   47 expression: expression '+' . expression
-
-    INT       shift, and go to state 4
-    FLOAT     shift, and go to state 5
-    CHAR      shift, and go to state 6
-    BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
-    '-'       shift, and go to state 14
-    '!'       shift, and go to state 15
-    '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 86
 
 
-State 62
+State 60
 
-   48 expression: expression '-' . expression
+   40 expression: expression '^' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 87
 
 
-State 63
+State 61
 
-   49 expression: expression '*' . expression
+   41 expression: expression '&' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 88
 
 
-State 64
+State 62
 
-   50 expression: expression '/' . expression
+   50 expression: expression '+' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 89
 
 
-State 65
+State 63
 
-   51 expression: expression '%' . expression
+   51 expression: expression '-' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 90
 
 
-State 66
+State 64
 
-   28 control_statement: IF '(' expression . ')' '{' statement_list '}' else_statement
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-    ')'     shift, and go to state 91
-
-
-State 67
-
-   33 loops: FOR assignment_statement ',' . expression ',' assignment_statement '{' statement_list '}'
+   52 expression: expression '*' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 91
+
+
+State 65
+
+   53 expression: expression '/' . expression
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
 
     value       go to state 21
     expression  go to state 92
 
 
-State 68
+State 66
 
-   32 loops: WHILE '(' expression . ')' '{' statement_list '}'
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-    ')'     shift, and go to state 93
-
-
-State 69
-
-   22 assignment_statement: VARIABLE ASSIGNMENT expression .
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 22 (assignment_statement)
-
-
-State 70
-
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-   52           | '(' expression . ')'
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-    ')'     shift, and go to state 94
-
-
-State 71
-
-   27 tertiary_statement: '(' expression ')' . '?' statement ':' statement
-   52 expression: '(' expression ')' .
-
-    '?'  shift, and go to state 95
-
-    $default  reduce using rule 52 (expression)
-
-
-State 72
-
-   23 declaration_statement: data_type VARIABLE ASSIGNMENT . expression
+   54 expression: expression '%' . expression
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
-    expression  go to state 96
+    expression  go to state 93
+
+
+State 67
+
+   31 control_statement: IF '(' expression . ')' '{' statement_list '}' else_statement
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ')'     shift, and go to state 94
+
+
+State 68
+
+   36 loops: FOR assignment_statement ',' . expression ',' assignment_statement '{' statement_list '}'
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 95
+
+
+State 69
+
+   35 loops: WHILE '(' expression . ')' '{' statement_list '}'
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ')'     shift, and go to state 96
+
+
+State 70
+
+   22 assignment_statement: VARIABLE ASSIGNMENT expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 22 (assignment_statement)
+
+
+State 71
+
+   23 assignment_statement: VARIABLE '[' expression . ']' ASSIGNMENT expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ']'     shift, and go to state 97
+
+
+State 72
+
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+   55           | '(' expression . ')'
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ')'     shift, and go to state 98
 
 
 State 73
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   45           | expression LSHIFT expression .
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   30 tertiary_statement: '(' expression ')' . '?' statement ':' statement
+   55 expression: '(' expression ')' .
 
-    '+'  shift, and go to state 61
-    '-'  shift, and go to state 62
-    '*'  shift, and go to state 63
-    '/'  shift, and go to state 64
-    '%'  shift, and go to state 65
+    '?'  shift, and go to state 99
 
-    $default  reduce using rule 45 (expression)
+    $default  reduce using rule 55 (expression)
 
 
 State 74
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   46           | expression RSHIFT expression .
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   24 declaration_statement: data_type VARIABLE ASSIGNMENT . expression
 
-    '+'  shift, and go to state 61
-    '-'  shift, and go to state 62
-    '*'  shift, and go to state 63
-    '/'  shift, and go to state 64
-    '%'  shift, and go to state 65
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
 
-    $default  reduce using rule 46 (expression)
+    value       go to state 21
+    expression  go to state 100
 
 
 State 75
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   43           | expression LT expression .
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   26 declaration_statement: data_type VARIABLE '[' . INT ']' ASSIGNMENT '{' expression '}'
+   27                      | data_type VARIABLE '[' . INT ']'
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 43 (expression)
+    INT  shift, and go to state 101
 
 
 State 76
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   41           | expression GT expression .
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   48           | expression LSHIFT expression .
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
+    '+'  shift, and go to state 62
+    '-'  shift, and go to state 63
+    '*'  shift, and go to state 64
+    '/'  shift, and go to state 65
+    '%'  shift, and go to state 66
 
-    $default  reduce using rule 41 (expression)
+    $default  reduce using rule 48 (expression)
 
 
 State 77
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   39           | expression EQ expression .
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   49           | expression RSHIFT expression .
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
+    '+'  shift, and go to state 62
+    '-'  shift, and go to state 63
+    '*'  shift, and go to state 64
+    '/'  shift, and go to state 65
+    '%'  shift, and go to state 66
 
-    $default  reduce using rule 39 (expression)
+    $default  reduce using rule 49 (expression)
 
 
 State 78
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   40           | expression NE expression .
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   46           | expression LT expression .
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
 
-    $default  reduce using rule 40 (expression)
+    $default  reduce using rule 46 (expression)
 
 
 State 79
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   44           | expression LE expression .
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   44           | expression GT expression .
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
 
     $default  reduce using rule 44 (expression)
 
 
 State 80
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   42           | expression GE expression .
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   42           | expression EQ expression .
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
 
     $default  reduce using rule 42 (expression)
 
 
 State 81
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   35           | expression LOGAND expression .
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   43           | expression NE expression .
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
 
-    $default  reduce using rule 35 (expression)
+    $default  reduce using rule 43 (expression)
 
 
 State 82
 
-   34 expression: expression . LOGOR expression
-   34           | expression LOGOR expression .
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   47           | expression LE expression .
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 34 (expression)
-
-
-State 83
-
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   36           | expression '|' expression .
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 36 (expression)
-
-
-State 84
-
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   37           | expression '^' expression .
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 37 (expression)
-
-
-State 85
-
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   38           | expression '&' expression .
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 38 (expression)
-
-
-State 86
-
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   47           | expression '+' expression .
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    '*'  shift, and go to state 63
-    '/'  shift, and go to state 64
-    '%'  shift, and go to state 65
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
 
     $default  reduce using rule 47 (expression)
 
 
+State 83
+
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   45           | expression GE expression .
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 45 (expression)
+
+
+State 84
+
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   38           | expression LOGAND expression .
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 38 (expression)
+
+
+State 85
+
+   37 expression: expression . LOGOR expression
+   37           | expression LOGOR expression .
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 37 (expression)
+
+
+State 86
+
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   39           | expression '|' expression .
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 39 (expression)
+
+
 State 87
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   48           | expression '-' expression .
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   40           | expression '^' expression .
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    '*'  shift, and go to state 63
-    '/'  shift, and go to state 64
-    '%'  shift, and go to state 65
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
 
-    $default  reduce using rule 48 (expression)
+    $default  reduce using rule 40 (expression)
 
 
 State 88
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   49           | expression '*' expression .
-   50           | expression . '/' expression
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   41           | expression '&' expression .
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    $default  reduce using rule 49 (expression)
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 41 (expression)
 
 
 State 89
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   50           | expression '/' expression .
-   51           | expression . '%' expression
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   50           | expression '+' expression .
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    '*'  shift, and go to state 64
+    '/'  shift, and go to state 65
+    '%'  shift, and go to state 66
 
     $default  reduce using rule 50 (expression)
 
 
 State 90
 
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-   51           | expression '%' expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   51           | expression '-' expression .
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    '*'  shift, and go to state 64
+    '/'  shift, and go to state 65
+    '%'  shift, and go to state 66
 
     $default  reduce using rule 51 (expression)
 
 
 State 91
 
-   28 control_statement: IF '(' expression ')' . '{' statement_list '}' else_statement
-
-    '{'  shift, and go to state 97
-
-
-State 92
-
-   33 loops: FOR assignment_statement ',' expression . ',' assignment_statement '{' statement_list '}'
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-    ','     shift, and go to state 98
-
-
-State 93
-
-   32 loops: WHILE '(' expression ')' . '{' statement_list '}'
-
-    '{'  shift, and go to state 99
-
-
-State 94
-
-   52 expression: '(' expression ')' .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   52           | expression '*' expression .
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
     $default  reduce using rule 52 (expression)
 
 
+State 92
+
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   53           | expression '/' expression .
+   54           | expression . '%' expression
+
+    $default  reduce using rule 53 (expression)
+
+
+State 93
+
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+   54           | expression '%' expression .
+
+    $default  reduce using rule 54 (expression)
+
+
+State 94
+
+   31 control_statement: IF '(' expression ')' . '{' statement_list '}' else_statement
+
+    '{'  shift, and go to state 102
+
+
 State 95
 
-   27 tertiary_statement: '(' expression ')' '?' . statement ':' statement
+   36 loops: FOR assignment_statement ',' expression . ',' assignment_statement '{' statement_list '}'
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ','     shift, and go to state 103
+
+
+State 96
+
+   35 loops: WHILE '(' expression ')' . '{' statement_list '}'
+
+    '{'  shift, and go to state 104
+
+
+State 97
+
+   23 assignment_statement: VARIABLE '[' expression ']' . ASSIGNMENT expression
+
+    ASSIGNMENT  shift, and go to state 105
+
+
+State 98
+
+   55 expression: '(' expression ')' .
+
+    $default  reduce using rule 55 (expression)
+
+
+State 99
+
+   30 tertiary_statement: '(' expression ')' '?' . statement ':' statement
 
     IF        shift, and go to state 1
     INT       shift, and go to state 4
@@ -2024,208 +2110,71 @@ State 95
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
-    statement             go to state 100
+    statement             go to state 106
     value                 go to state 21
-    assignment_statement  go to state 101
-    control_statement     go to state 102
-    expression            go to state 103
-
-
-State 96
-
-   23 declaration_statement: data_type VARIABLE ASSIGNMENT expression .
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 23 (declaration_statement)
-
-
-State 97
-
-   28 control_statement: IF '(' expression ')' '{' . statement_list '}' else_statement
-
-    IF          shift, and go to state 1
-    FOR         shift, and go to state 2
-    WHILE       shift, and go to state 3
-    INT         shift, and go to state 4
-    FLOAT       shift, and go to state 5
-    CHAR        shift, and go to state 6
-    BOOL        shift, and go to state 7
-    VARIABLE    shift, and go to state 8
-    TYPE_INT    shift, and go to state 9
-    TYPE_FLOAT  shift, and go to state 10
-    TYPE_CHAR   shift, and go to state 11
-    TYPE_BOOL   shift, and go to state 12
-    TYPE_FILE   shift, and go to state 13
-    '-'         shift, and go to state 14
-    '!'         shift, and go to state 15
-    '~'         shift, and go to state 16
-    '('         shift, and go to state 17
-
-    statement_list         go to state 104
-    statement_block        go to state 19
-    data_type              go to state 20
-    value                  go to state 21
-    assignment_statement   go to state 22
-    declaration_statement  go to state 23
-    tertiary_statement     go to state 25
-    control_statement      go to state 26
-    loops                  go to state 27
-    expression             go to state 28
-
-
-State 98
-
-   33 loops: FOR assignment_statement ',' expression ',' . assignment_statement '{' statement_list '}'
-
-    VARIABLE  shift, and go to state 30
-
-    assignment_statement  go to state 105
-
-
-State 99
-
-   32 loops: WHILE '(' expression ')' '{' . statement_list '}'
-
-    IF          shift, and go to state 1
-    FOR         shift, and go to state 2
-    WHILE       shift, and go to state 3
-    INT         shift, and go to state 4
-    FLOAT       shift, and go to state 5
-    CHAR        shift, and go to state 6
-    BOOL        shift, and go to state 7
-    VARIABLE    shift, and go to state 8
-    TYPE_INT    shift, and go to state 9
-    TYPE_FLOAT  shift, and go to state 10
-    TYPE_CHAR   shift, and go to state 11
-    TYPE_BOOL   shift, and go to state 12
-    TYPE_FILE   shift, and go to state 13
-    '-'         shift, and go to state 14
-    '!'         shift, and go to state 15
-    '~'         shift, and go to state 16
-    '('         shift, and go to state 17
-
-    statement_list         go to state 106
-    statement_block        go to state 19
-    data_type              go to state 20
-    value                  go to state 21
-    assignment_statement   go to state 22
-    declaration_statement  go to state 23
-    tertiary_statement     go to state 25
-    control_statement      go to state 26
-    loops                  go to state 27
-    expression             go to state 28
+    assignment_statement  go to state 107
+    control_statement     go to state 108
+    expression            go to state 109
 
 
 State 100
 
-   27 tertiary_statement: '(' expression ')' '?' statement . ':' statement
+   24 declaration_statement: data_type VARIABLE ASSIGNMENT expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
 
-    ':'  shift, and go to state 107
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 24 (declaration_statement)
 
 
 State 101
 
-   10 statement: assignment_statement .
+   26 declaration_statement: data_type VARIABLE '[' INT . ']' ASSIGNMENT '{' expression '}'
+   27                      | data_type VARIABLE '[' INT . ']'
 
-    $default  reduce using rule 10 (statement)
+    ']'  shift, and go to state 110
 
 
 State 102
 
-   11 statement: control_statement .
+   31 control_statement: IF '(' expression ')' '{' . statement_list '}' else_statement
 
-    $default  reduce using rule 11 (statement)
-
-
-State 103
-
-   12 statement: expression .
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-
-    $default  reduce using rule 12 (statement)
-
-
-State 104
-
-    1 statement_list: statement_list . statement_block
-    3               | statement_list . error
-   28 control_statement: IF '(' expression ')' '{' statement_list . '}' else_statement
-
-    error       shift, and go to state 40
     IF          shift, and go to state 1
     FOR         shift, and go to state 2
     WHILE       shift, and go to state 3
@@ -2243,9 +2192,52 @@ State 104
     '!'         shift, and go to state 15
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
-    '}'         shift, and go to state 108
 
-    statement_block        go to state 41
+    statement_list         go to state 111
+    statement_block        go to state 19
+    data_type              go to state 20
+    value                  go to state 21
+    assignment_statement   go to state 22
+    declaration_statement  go to state 23
+    tertiary_statement     go to state 25
+    control_statement      go to state 26
+    loops                  go to state 27
+    expression             go to state 28
+
+
+State 103
+
+   36 loops: FOR assignment_statement ',' expression ',' . assignment_statement '{' statement_list '}'
+
+    VARIABLE  shift, and go to state 30
+
+    assignment_statement  go to state 112
+
+
+State 104
+
+   35 loops: WHILE '(' expression ')' '{' . statement_list '}'
+
+    IF          shift, and go to state 1
+    FOR         shift, and go to state 2
+    WHILE       shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    CHAR        shift, and go to state 6
+    BOOL        shift, and go to state 7
+    VARIABLE    shift, and go to state 8
+    TYPE_INT    shift, and go to state 9
+    TYPE_FLOAT  shift, and go to state 10
+    TYPE_CHAR   shift, and go to state 11
+    TYPE_BOOL   shift, and go to state 12
+    TYPE_FILE   shift, and go to state 13
+    '-'         shift, and go to state 14
+    '!'         shift, and go to state 15
+    '~'         shift, and go to state 16
+    '('         shift, and go to state 17
+
+    statement_list         go to state 113
+    statement_block        go to state 19
     data_type              go to state 20
     value                  go to state 21
     assignment_statement   go to state 22
@@ -2258,18 +2250,104 @@ State 104
 
 State 105
 
-   33 loops: FOR assignment_statement ',' expression ',' assignment_statement . '{' statement_list '}'
+   23 assignment_statement: VARIABLE '[' expression ']' ASSIGNMENT . expression
 
-    '{'  shift, and go to state 109
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 114
 
 
 State 106
 
+   30 tertiary_statement: '(' expression ')' '?' statement . ':' statement
+
+    ':'  shift, and go to state 115
+
+
+State 107
+
+   10 statement: assignment_statement .
+
+    $default  reduce using rule 10 (statement)
+
+
+State 108
+
+   11 statement: control_statement .
+
+    $default  reduce using rule 11 (statement)
+
+
+State 109
+
+   12 statement: expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 12 (statement)
+
+
+State 110
+
+   26 declaration_statement: data_type VARIABLE '[' INT ']' . ASSIGNMENT '{' expression '}'
+   27                      | data_type VARIABLE '[' INT ']' .
+
+    ASSIGNMENT  shift, and go to state 116
+
+    $default  reduce using rule 27 (declaration_statement)
+
+
+State 111
+
     1 statement_list: statement_list . statement_block
     3               | statement_list . error
-   32 loops: WHILE '(' expression ')' '{' statement_list . '}'
+   31 control_statement: IF '(' expression ')' '{' statement_list . '}' else_statement
 
-    error       shift, and go to state 40
+    error       shift, and go to state 41
     IF          shift, and go to state 1
     FOR         shift, and go to state 2
     WHILE       shift, and go to state 3
@@ -2287,9 +2365,9 @@ State 106
     '!'         shift, and go to state 15
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
-    '}'         shift, and go to state 110
+    '}'         shift, and go to state 117
 
-    statement_block        go to state 41
+    statement_block        go to state 42
     data_type              go to state 20
     value                  go to state 21
     assignment_statement   go to state 22
@@ -2300,9 +2378,97 @@ State 106
     expression             go to state 28
 
 
-State 107
+State 112
 
-   27 tertiary_statement: '(' expression ')' '?' statement ':' . statement
+   36 loops: FOR assignment_statement ',' expression ',' assignment_statement . '{' statement_list '}'
+
+    '{'  shift, and go to state 118
+
+
+State 113
+
+    1 statement_list: statement_list . statement_block
+    3               | statement_list . error
+   35 loops: WHILE '(' expression ')' '{' statement_list . '}'
+
+    error       shift, and go to state 41
+    IF          shift, and go to state 1
+    FOR         shift, and go to state 2
+    WHILE       shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    CHAR        shift, and go to state 6
+    BOOL        shift, and go to state 7
+    VARIABLE    shift, and go to state 8
+    TYPE_INT    shift, and go to state 9
+    TYPE_FLOAT  shift, and go to state 10
+    TYPE_CHAR   shift, and go to state 11
+    TYPE_BOOL   shift, and go to state 12
+    TYPE_FILE   shift, and go to state 13
+    '-'         shift, and go to state 14
+    '!'         shift, and go to state 15
+    '~'         shift, and go to state 16
+    '('         shift, and go to state 17
+    '}'         shift, and go to state 119
+
+    statement_block        go to state 42
+    data_type              go to state 20
+    value                  go to state 21
+    assignment_statement   go to state 22
+    declaration_statement  go to state 23
+    tertiary_statement     go to state 25
+    control_statement      go to state 26
+    loops                  go to state 27
+    expression             go to state 28
+
+
+State 114
+
+   23 assignment_statement: VARIABLE '[' expression ']' ASSIGNMENT expression .
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+
+    $default  reduce using rule 23 (assignment_statement)
+
+
+State 115
+
+   30 tertiary_statement: '(' expression ')' '?' statement ':' . statement
 
     IF        shift, and go to state 1
     INT       shift, and go to state 4
@@ -2313,30 +2479,37 @@ State 107
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
-    statement             go to state 111
+    statement             go to state 120
     value                 go to state 21
-    assignment_statement  go to state 101
-    control_statement     go to state 102
-    expression            go to state 103
+    assignment_statement  go to state 107
+    control_statement     go to state 108
+    expression            go to state 109
 
 
-State 108
+State 116
 
-   28 control_statement: IF '(' expression ')' '{' statement_list '}' . else_statement
+   26 declaration_statement: data_type VARIABLE '[' INT ']' ASSIGNMENT . '{' expression '}'
 
-    ELIF  shift, and go to state 112
-    ELSE  shift, and go to state 113
-
-    $default  reduce using rule 31 (else_statement)
-
-    else_statement  go to state 114
+    '{'  shift, and go to state 121
 
 
-State 109
+State 117
 
-   33 loops: FOR assignment_statement ',' expression ',' assignment_statement '{' . statement_list '}'
+   31 control_statement: IF '(' expression ')' '{' statement_list '}' . else_statement
+
+    ELIF  shift, and go to state 122
+    ELSE  shift, and go to state 123
+
+    $default  reduce using rule 34 (else_statement)
+
+    else_statement  go to state 124
+
+
+State 118
+
+   36 loops: FOR assignment_statement ',' expression ',' assignment_statement '{' . statement_list '}'
 
     IF          shift, and go to state 1
     FOR         shift, and go to state 2
@@ -2356,7 +2529,7 @@ State 109
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
 
-    statement_list         go to state 115
+    statement_list         go to state 125
     statement_block        go to state 19
     data_type              go to state 20
     value                  go to state 21
@@ -2368,234 +2541,160 @@ State 109
     expression             go to state 28
 
 
-State 110
+State 119
 
-   32 loops: WHILE '(' expression ')' '{' statement_list '}' .
+   35 loops: WHILE '(' expression ')' '{' statement_list '}' .
 
-    $default  reduce using rule 32 (loops)
-
-
-State 111
-
-   27 tertiary_statement: '(' expression ')' '?' statement ':' statement .
-
-    $default  reduce using rule 27 (tertiary_statement)
+    $default  reduce using rule 35 (loops)
 
 
-State 112
+State 120
 
-   30 else_statement: ELIF . '(' expression ')' '{' statement_list '}' else_statement
+   30 tertiary_statement: '(' expression ')' '?' statement ':' statement .
 
-    '('  shift, and go to state 116
-
-
-State 113
-
-   29 else_statement: ELSE . '{' statement_list '}'
-
-    '{'  shift, and go to state 117
+    $default  reduce using rule 30 (tertiary_statement)
 
 
-State 114
+State 121
 
-   28 control_statement: IF '(' expression ')' '{' statement_list '}' else_statement .
-
-    $default  reduce using rule 28 (control_statement)
-
-
-State 115
-
-    1 statement_list: statement_list . statement_block
-    3               | statement_list . error
-   33 loops: FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list . '}'
-
-    error       shift, and go to state 40
-    IF          shift, and go to state 1
-    FOR         shift, and go to state 2
-    WHILE       shift, and go to state 3
-    INT         shift, and go to state 4
-    FLOAT       shift, and go to state 5
-    CHAR        shift, and go to state 6
-    BOOL        shift, and go to state 7
-    VARIABLE    shift, and go to state 8
-    TYPE_INT    shift, and go to state 9
-    TYPE_FLOAT  shift, and go to state 10
-    TYPE_CHAR   shift, and go to state 11
-    TYPE_BOOL   shift, and go to state 12
-    TYPE_FILE   shift, and go to state 13
-    '-'         shift, and go to state 14
-    '!'         shift, and go to state 15
-    '~'         shift, and go to state 16
-    '('         shift, and go to state 17
-    '}'         shift, and go to state 118
-
-    statement_block        go to state 41
-    data_type              go to state 20
-    value                  go to state 21
-    assignment_statement   go to state 22
-    declaration_statement  go to state 23
-    tertiary_statement     go to state 25
-    control_statement      go to state 26
-    loops                  go to state 27
-    expression             go to state 28
-
-
-State 116
-
-   30 else_statement: ELIF '(' . expression ')' '{' statement_list '}' else_statement
+   26 declaration_statement: data_type VARIABLE '[' INT ']' ASSIGNMENT '{' . expression '}'
 
     INT       shift, and go to state 4
     FLOAT     shift, and go to state 5
     CHAR      shift, and go to state 6
     BOOL      shift, and go to state 7
-    VARIABLE  shift, and go to state 34
+    VARIABLE  shift, and go to state 35
     '-'       shift, and go to state 14
     '!'       shift, and go to state 15
     '~'       shift, and go to state 16
-    '('       shift, and go to state 35
+    '('       shift, and go to state 36
 
     value       go to state 21
-    expression  go to state 119
-
-
-State 117
-
-   29 else_statement: ELSE '{' . statement_list '}'
-
-    IF          shift, and go to state 1
-    FOR         shift, and go to state 2
-    WHILE       shift, and go to state 3
-    INT         shift, and go to state 4
-    FLOAT       shift, and go to state 5
-    CHAR        shift, and go to state 6
-    BOOL        shift, and go to state 7
-    VARIABLE    shift, and go to state 8
-    TYPE_INT    shift, and go to state 9
-    TYPE_FLOAT  shift, and go to state 10
-    TYPE_CHAR   shift, and go to state 11
-    TYPE_BOOL   shift, and go to state 12
-    TYPE_FILE   shift, and go to state 13
-    '-'         shift, and go to state 14
-    '!'         shift, and go to state 15
-    '~'         shift, and go to state 16
-    '('         shift, and go to state 17
-
-    statement_list         go to state 120
-    statement_block        go to state 19
-    data_type              go to state 20
-    value                  go to state 21
-    assignment_statement   go to state 22
-    declaration_statement  go to state 23
-    tertiary_statement     go to state 25
-    control_statement      go to state 26
-    loops                  go to state 27
-    expression             go to state 28
-
-
-State 118
-
-   33 loops: FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}' .
-
-    $default  reduce using rule 33 (loops)
-
-
-State 119
-
-   30 else_statement: ELIF '(' expression . ')' '{' statement_list '}' else_statement
-   34 expression: expression . LOGOR expression
-   35           | expression . LOGAND expression
-   36           | expression . '|' expression
-   37           | expression . '^' expression
-   38           | expression . '&' expression
-   39           | expression . EQ expression
-   40           | expression . NE expression
-   41           | expression . GT expression
-   42           | expression . GE expression
-   43           | expression . LT expression
-   44           | expression . LE expression
-   45           | expression . LSHIFT expression
-   46           | expression . RSHIFT expression
-   47           | expression . '+' expression
-   48           | expression . '-' expression
-   49           | expression . '*' expression
-   50           | expression . '/' expression
-   51           | expression . '%' expression
-
-    LSHIFT  shift, and go to state 47
-    RSHIFT  shift, and go to state 48
-    LT      shift, and go to state 49
-    GT      shift, and go to state 50
-    EQ      shift, and go to state 51
-    NE      shift, and go to state 52
-    LE      shift, and go to state 53
-    GE      shift, and go to state 54
-    LOGAND  shift, and go to state 55
-    LOGOR   shift, and go to state 56
-    '|'     shift, and go to state 58
-    '^'     shift, and go to state 59
-    '&'     shift, and go to state 60
-    '+'     shift, and go to state 61
-    '-'     shift, and go to state 62
-    '*'     shift, and go to state 63
-    '/'     shift, and go to state 64
-    '%'     shift, and go to state 65
-    ')'     shift, and go to state 121
-
-
-State 120
-
-    1 statement_list: statement_list . statement_block
-    3               | statement_list . error
-   29 else_statement: ELSE '{' statement_list . '}'
-
-    error       shift, and go to state 40
-    IF          shift, and go to state 1
-    FOR         shift, and go to state 2
-    WHILE       shift, and go to state 3
-    INT         shift, and go to state 4
-    FLOAT       shift, and go to state 5
-    CHAR        shift, and go to state 6
-    BOOL        shift, and go to state 7
-    VARIABLE    shift, and go to state 8
-    TYPE_INT    shift, and go to state 9
-    TYPE_FLOAT  shift, and go to state 10
-    TYPE_CHAR   shift, and go to state 11
-    TYPE_BOOL   shift, and go to state 12
-    TYPE_FILE   shift, and go to state 13
-    '-'         shift, and go to state 14
-    '!'         shift, and go to state 15
-    '~'         shift, and go to state 16
-    '('         shift, and go to state 17
-    '}'         shift, and go to state 122
-
-    statement_block        go to state 41
-    data_type              go to state 20
-    value                  go to state 21
-    assignment_statement   go to state 22
-    declaration_statement  go to state 23
-    tertiary_statement     go to state 25
-    control_statement      go to state 26
-    loops                  go to state 27
-    expression             go to state 28
-
-
-State 121
-
-   30 else_statement: ELIF '(' expression ')' . '{' statement_list '}' else_statement
-
-    '{'  shift, and go to state 123
+    expression  go to state 126
 
 
 State 122
 
-   29 else_statement: ELSE '{' statement_list '}' .
+   33 else_statement: ELIF . '(' expression ')' '{' statement_list '}' else_statement
 
-    $default  reduce using rule 29 (else_statement)
+    '('  shift, and go to state 127
 
 
 State 123
 
-   30 else_statement: ELIF '(' expression ')' '{' . statement_list '}' else_statement
+   32 else_statement: ELSE . '{' statement_list '}'
+
+    '{'  shift, and go to state 128
+
+
+State 124
+
+   31 control_statement: IF '(' expression ')' '{' statement_list '}' else_statement .
+
+    $default  reduce using rule 31 (control_statement)
+
+
+State 125
+
+    1 statement_list: statement_list . statement_block
+    3               | statement_list . error
+   36 loops: FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list . '}'
+
+    error       shift, and go to state 41
+    IF          shift, and go to state 1
+    FOR         shift, and go to state 2
+    WHILE       shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    CHAR        shift, and go to state 6
+    BOOL        shift, and go to state 7
+    VARIABLE    shift, and go to state 8
+    TYPE_INT    shift, and go to state 9
+    TYPE_FLOAT  shift, and go to state 10
+    TYPE_CHAR   shift, and go to state 11
+    TYPE_BOOL   shift, and go to state 12
+    TYPE_FILE   shift, and go to state 13
+    '-'         shift, and go to state 14
+    '!'         shift, and go to state 15
+    '~'         shift, and go to state 16
+    '('         shift, and go to state 17
+    '}'         shift, and go to state 129
+
+    statement_block        go to state 42
+    data_type              go to state 20
+    value                  go to state 21
+    assignment_statement   go to state 22
+    declaration_statement  go to state 23
+    tertiary_statement     go to state 25
+    control_statement      go to state 26
+    loops                  go to state 27
+    expression             go to state 28
+
+
+State 126
+
+   26 declaration_statement: data_type VARIABLE '[' INT ']' ASSIGNMENT '{' expression . '}'
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    '}'     shift, and go to state 130
+
+
+State 127
+
+   33 else_statement: ELIF '(' . expression ')' '{' statement_list '}' else_statement
+
+    INT       shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    CHAR      shift, and go to state 6
+    BOOL      shift, and go to state 7
+    VARIABLE  shift, and go to state 35
+    '-'       shift, and go to state 14
+    '!'       shift, and go to state 15
+    '~'       shift, and go to state 16
+    '('       shift, and go to state 36
+
+    value       go to state 21
+    expression  go to state 131
+
+
+State 128
+
+   32 else_statement: ELSE '{' . statement_list '}'
 
     IF          shift, and go to state 1
     FOR         shift, and go to state 2
@@ -2615,7 +2714,7 @@ State 123
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
 
-    statement_list         go to state 124
+    statement_list         go to state 132
     statement_block        go to state 19
     data_type              go to state 20
     value                  go to state 21
@@ -2627,13 +2726,70 @@ State 123
     expression             go to state 28
 
 
-State 124
+State 129
+
+   36 loops: FOR assignment_statement ',' expression ',' assignment_statement '{' statement_list '}' .
+
+    $default  reduce using rule 36 (loops)
+
+
+State 130
+
+   26 declaration_statement: data_type VARIABLE '[' INT ']' ASSIGNMENT '{' expression '}' .
+
+    $default  reduce using rule 26 (declaration_statement)
+
+
+State 131
+
+   33 else_statement: ELIF '(' expression . ')' '{' statement_list '}' else_statement
+   37 expression: expression . LOGOR expression
+   38           | expression . LOGAND expression
+   39           | expression . '|' expression
+   40           | expression . '^' expression
+   41           | expression . '&' expression
+   42           | expression . EQ expression
+   43           | expression . NE expression
+   44           | expression . GT expression
+   45           | expression . GE expression
+   46           | expression . LT expression
+   47           | expression . LE expression
+   48           | expression . LSHIFT expression
+   49           | expression . RSHIFT expression
+   50           | expression . '+' expression
+   51           | expression . '-' expression
+   52           | expression . '*' expression
+   53           | expression . '/' expression
+   54           | expression . '%' expression
+
+    LSHIFT  shift, and go to state 48
+    RSHIFT  shift, and go to state 49
+    LT      shift, and go to state 50
+    GT      shift, and go to state 51
+    EQ      shift, and go to state 52
+    NE      shift, and go to state 53
+    LE      shift, and go to state 54
+    GE      shift, and go to state 55
+    LOGAND  shift, and go to state 56
+    LOGOR   shift, and go to state 57
+    '|'     shift, and go to state 59
+    '^'     shift, and go to state 60
+    '&'     shift, and go to state 61
+    '+'     shift, and go to state 62
+    '-'     shift, and go to state 63
+    '*'     shift, and go to state 64
+    '/'     shift, and go to state 65
+    '%'     shift, and go to state 66
+    ')'     shift, and go to state 133
+
+
+State 132
 
     1 statement_list: statement_list . statement_block
     3               | statement_list . error
-   30 else_statement: ELIF '(' expression ')' '{' statement_list . '}' else_statement
+   32 else_statement: ELSE '{' statement_list . '}'
 
-    error       shift, and go to state 40
+    error       shift, and go to state 41
     IF          shift, and go to state 1
     FOR         shift, and go to state 2
     WHILE       shift, and go to state 3
@@ -2651,9 +2807,9 @@ State 124
     '!'         shift, and go to state 15
     '~'         shift, and go to state 16
     '('         shift, and go to state 17
-    '}'         shift, and go to state 125
+    '}'         shift, and go to state 134
 
-    statement_block        go to state 41
+    statement_block        go to state 42
     data_type              go to state 20
     value                  go to state 21
     assignment_statement   go to state 22
@@ -2664,20 +2820,105 @@ State 124
     expression             go to state 28
 
 
-State 125
+State 133
 
-   30 else_statement: ELIF '(' expression ')' '{' statement_list '}' . else_statement
+   33 else_statement: ELIF '(' expression ')' . '{' statement_list '}' else_statement
 
-    ELIF  shift, and go to state 112
-    ELSE  shift, and go to state 113
-
-    $default  reduce using rule 31 (else_statement)
-
-    else_statement  go to state 126
+    '{'  shift, and go to state 135
 
 
-State 126
+State 134
 
-   30 else_statement: ELIF '(' expression ')' '{' statement_list '}' else_statement .
+   32 else_statement: ELSE '{' statement_list '}' .
 
-    $default  reduce using rule 30 (else_statement)
+    $default  reduce using rule 32 (else_statement)
+
+
+State 135
+
+   33 else_statement: ELIF '(' expression ')' '{' . statement_list '}' else_statement
+
+    IF          shift, and go to state 1
+    FOR         shift, and go to state 2
+    WHILE       shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    CHAR        shift, and go to state 6
+    BOOL        shift, and go to state 7
+    VARIABLE    shift, and go to state 8
+    TYPE_INT    shift, and go to state 9
+    TYPE_FLOAT  shift, and go to state 10
+    TYPE_CHAR   shift, and go to state 11
+    TYPE_BOOL   shift, and go to state 12
+    TYPE_FILE   shift, and go to state 13
+    '-'         shift, and go to state 14
+    '!'         shift, and go to state 15
+    '~'         shift, and go to state 16
+    '('         shift, and go to state 17
+
+    statement_list         go to state 136
+    statement_block        go to state 19
+    data_type              go to state 20
+    value                  go to state 21
+    assignment_statement   go to state 22
+    declaration_statement  go to state 23
+    tertiary_statement     go to state 25
+    control_statement      go to state 26
+    loops                  go to state 27
+    expression             go to state 28
+
+
+State 136
+
+    1 statement_list: statement_list . statement_block
+    3               | statement_list . error
+   33 else_statement: ELIF '(' expression ')' '{' statement_list . '}' else_statement
+
+    error       shift, and go to state 41
+    IF          shift, and go to state 1
+    FOR         shift, and go to state 2
+    WHILE       shift, and go to state 3
+    INT         shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    CHAR        shift, and go to state 6
+    BOOL        shift, and go to state 7
+    VARIABLE    shift, and go to state 8
+    TYPE_INT    shift, and go to state 9
+    TYPE_FLOAT  shift, and go to state 10
+    TYPE_CHAR   shift, and go to state 11
+    TYPE_BOOL   shift, and go to state 12
+    TYPE_FILE   shift, and go to state 13
+    '-'         shift, and go to state 14
+    '!'         shift, and go to state 15
+    '~'         shift, and go to state 16
+    '('         shift, and go to state 17
+    '}'         shift, and go to state 137
+
+    statement_block        go to state 42
+    data_type              go to state 20
+    value                  go to state 21
+    assignment_statement   go to state 22
+    declaration_statement  go to state 23
+    tertiary_statement     go to state 25
+    control_statement      go to state 26
+    loops                  go to state 27
+    expression             go to state 28
+
+
+State 137
+
+   33 else_statement: ELIF '(' expression ')' '{' statement_list '}' . else_statement
+
+    ELIF  shift, and go to state 122
+    ELSE  shift, and go to state 123
+
+    $default  reduce using rule 34 (else_statement)
+
+    else_statement  go to state 138
+
+
+State 138
+
+   33 else_statement: ELIF '(' expression ')' '{' statement_list '}' else_statement .
+
+    $default  reduce using rule 33 (else_statement)

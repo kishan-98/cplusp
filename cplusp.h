@@ -607,10 +607,13 @@ protected:
 	std::string terminatorChar;
 	bool printStatement;
 	std::string variableID, dataType;
+	int firstD, secondD;
 	expression_node *expressionNode;
 public:
-	declaration_statement_node(std::string data_type, std::string id, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
 	// declaration_statement_node(std::string id, bool print = false, std::string term = "", std::string init = "");
+	declaration_statement_node(std::string data_type, std::string id, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
+	declaration_statement_node(std::string data_type, std::string id, int N1, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
+	declaration_statement_node(std::string data_type, std::string id, int N1, int N2, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
 	void setInitiatorChar(std::string init){initiatorChar = init; return;}
 	void addInitiatorChar(std::string term){initiatorChar += term; return;}
 	void remInitiatorChar(std::string term){if(initiatorChar.length() >= term.length() && initiatorChar.substr(initiatorChar.length() - term.length(), term.length()) == term){initiatorChar = initiatorChar.substr(0, initiatorChar.length() - term.length());} return;}
@@ -628,9 +631,12 @@ protected:
 	std::string terminatorChar;
 	bool printStatement;
 	std::string variableID;
+	expression_node* firstI, secondI;
 	expression_node *expressionNode;
 public:
 	assignment_statement_node(std::string id, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
+	assignment_statement_node(std::string id, expression_node *first_index, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
+	assignment_statement_node(std::string id, expression_node *first_index, expression_node *second_index, expression_node *expr_node, bool print = false, std::string term = "", std::string init = "");
 	void setInitiatorChar(std::string init){initiatorChar = init; return;}
 	void addInitiatorChar(std::string term){initiatorChar += term; return;}
 	void remInitiatorChar(std::string term){if(initiatorChar.length() >= term.length() && initiatorChar.substr(initiatorChar.length() - term.length(), term.length()) == term){initiatorChar = initiatorChar.substr(0, initiatorChar.length() - term.length());} return;}
@@ -657,6 +663,8 @@ public:
 
 extern program_node *root;
 extern std::map<std::string, dtype> value_table;
+extern std::map<std::string, std::vector<dtype> > array1_table;
+extern std::map<std::string, std::vector<std::vector<dtype> > > array2_table;
 extern std::map<std::string, bool> id_table;
 extern std::map<std::string, llvm::Value*> symbol_table;
 extern std::map<std::string, llvm::GlobalVariable*> variable_table;

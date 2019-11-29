@@ -1,6 +1,8 @@
 #include "cplusp.h"
 
 std::map<std::string, dtype> value_table;
+std::map<std::string, std::vector<dtype> > array1_table;
+std::map<std::string, std::vector<std::vector<dtype> > > array2_table;
 std::map<std::string, bool> id_table;
 std::map<std::string, llvm::Value*> symbol_table;
 std::map<std::string, llvm::GlobalVariable*> variable_table;
@@ -788,7 +790,11 @@ llvm::Value* for_statement_node::generate(bool loadVariable){
 }
 
 
-declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), expressionNode(expr_node) {
+declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(0), secondD(0), expressionNode(expr_node) {
+}
+declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, int N1, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(N1), secondD(0), expressionNode(expr_node) {
+}
+declaration_statement_node::declaration_statement_node(std::string data_type, std::string id, int N1, int N2, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), dataType(data_type), firstD(N1), secondD(N2), expressionNode(expr_node) {
 }
 void declaration_statement_node::print(){
 	std::cout << initiatorChar;
@@ -828,7 +834,11 @@ llvm::Value* declaration_statement_node::generate(bool loadVariable){
 }
 
 
-assignment_statement_node::assignment_statement_node(std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), expressionNode(expr_node) {
+assignment_statement_node::assignment_statement_node(std::string id, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(nullptr), secondI(nullptr), expressionNode(expr_node) {
+}
+assignment_statement_node::assignment_statement_node(std::string id, expression_node *first_index, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(first_index), secondI(nullptr), expressionNode(expr_node) {
+}
+assignment_statement_node::assignment_statement_node(std::string id, expression_node *first_index, expression_node *second_index, expression_node *expr_node, bool print, std::string term, std::string init) : initiatorChar(init), terminatorChar(term), printStatement(print), variableID(id), firstI(first_index), secondI(second_index), expressionNode(expr_node) {
 }
 void assignment_statement_node::print(){
 	std::cout << initiatorChar;
