@@ -1,6 +1,6 @@
 # C+P: Language Manual
 ___
-> Krishn Bera (201556009), Kishan Sangani (201501053)
+> Kishan Sangani (201501053)
 ___
 
 Compiler for a hybrid C++ and Python like language `C+P`

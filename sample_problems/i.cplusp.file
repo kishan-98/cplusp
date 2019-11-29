@@ -1,0 +1,10 @@
+int a[10] = {0};
+int sum = 0;
+int temp = 0;
+int i = 0;
+int j = 1;
+for i = 0, i < 10, i = i + 1{
+	temp = sum + j;
+	sum = temp;
+}
+
