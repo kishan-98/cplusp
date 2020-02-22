@@ -2,7 +2,7 @@
 
 C+P is a hybrid programming language inspired from C++ and Python
 - Simplicity of Python language
-- Reliability of C language
+- Reliability of C++ language
 
 Following is the Context Free Grammar for C+P programming language:
 
